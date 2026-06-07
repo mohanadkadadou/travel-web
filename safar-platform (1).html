@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safar — سفر</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--ink:#08080e;--ink2:#0f0f1a;--ink3:#161622;--ink4:#1c1c2c;
+--card:#1e1e30;--card2:#242438;--rim:#2c2c44;--rim2:#383858;
+--fog:#505075;--mist:#8080a8;--ghost:#b0b0d0;--snow:#f0f0f8;
+--gold:#e8b84b;--gold2:#c99a2e;--gold-g:rgba(232,184,75,.18);
+--teal:#2ec4b6;--coral:#ff6b6b;--sage:#7bc67e;--violet:#9b8cf7;
+--r:10px;--rl:16px;--rx:24px;
+--fd:'Cormorant Garamond',serif;--fb:'Syne',sans-serif;--far:'Noto Kufi Arabic',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--snow);font-family:var(--fb);font-size:14px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+body[dir=rtl]{font-family:var(--far)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--ink2)}::-webkit-scrollbar-thumb{background:var(--rim2);border-radius:2px}
+button,input,select,textarea{font-family:inherit}
+a{color:inherit;text-decoration:none}
+.page{display:none}.page.active{display:block;animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fu{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.5)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* NAV */
+#nav{position:sticky;top:0;z-index:200;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(8,8,14,.9);backdrop-filter:blur(24px);border-bottom:1px solid rgba(232,184,75,.1)}
+.n-brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.n-gem{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--ink);font-weight:800;font-family:var(--fd)}
+.n-mark{font-family:var(--fd);font-size:22px;font-weight:600;color:var(--snow)}
+body[dir=rtl] .n-mark{font-family:var(--far);font-size:19px}
+.n-links{display:flex;align-items:center;gap:2px}
+.n-link{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:500;color:var(--mist);background:none;border:none;cursor:pointer;transition:.18s}
+.n-link:hover,.n-link.on{background:rgba(255,255,255,.07);color:var(--snow)}
+.n-right{display:flex;align-items:center;gap:10px}
+.lang-pill{padding:5px 12px;border-radius:20px;background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2);color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;transition:.18s;letter-spacing:.04em}
+.lang-pill:hover{background:rgba(232,184,75,.14)}
+.btn-g{background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:var(--ink);padding:9px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:.18s}
+.btn-g:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--gold-g)}
+
+/* TOAST */
+#toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card2);border:1px solid var(--rim2);padding:12px 24px;border-radius:10px;font-size:13px;color:var(--snow);white-space:nowrap;opacity:0;transition:.3s;pointer-events:none;z-index:9999}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── HERO ── */
+.hero{min-height:94vh;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 80px;overflow:hidden}
+.h-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 20%,rgba(232,184,75,.09) 0%,transparent 65%),radial-gradient(ellipse 40% 40% at 15% 80%,rgba(46,196,182,.06) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 85% 70%,rgba(155,140,247,.06) 0%,transparent 60%)}
+.h-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:52px 52px;mask-image:radial-gradient(ellipse 90% 80% at 50% 0%,black 30%,transparent 100%)}
+.h-eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(232,184,75,.25);background:rgba(232,184,75,.06);border-radius:50px;padding:7px 18px;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:36px;animation:fu .6s ease both}
+.h-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2.5s infinite}
+.h-h1{font-family:var(--fd);font-size:clamp(52px,7vw,90px);font-weight:700;line-height:1.0;color:var(--snow);max-width:900px;animation:fu .7s ease .08s both;letter-spacing:-.01em}
+body[dir=rtl] .h-h1{font-family:var(--far);font-size:clamp(36px,5.5vw,70px);line-height:1.2}
+.h-h1 em{font-style:italic;color:var(--gold)}
+.h-lead{font-size:17px;color:var(--mist);max-width:520px;margin:28px auto 44px;line-height:1.75;animation:fu .7s ease .16s both}
+.h-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fu .7s ease .24s both}
+.btn-hp{background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:var(--ink);padding:16px 32px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s}
+.btn-hp:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(232,184,75,.35)}
+.btn-ho{background:transparent;border:1px solid var(--rim2);color:var(--ghost);padding:16px 32px;border-radius:12px;font-size:15px;cursor:pointer;transition:.2s}
+.btn-ho:hover{border-color:var(--gold);color:var(--gold)}
+.h-stats{display:flex;gap:48px;justify-content:center;margin-top:72px;padding-top:48px;border-top:1px solid var(--rim);animation:fu .7s ease .32s both}
+.h-snum{font-family:var(--fd);font-size:36px;font-weight:700;color:var(--gold);line-height:1}
+.h-slbl{font-size:12px;color:var(--fog);margin-top:4px;letter-spacing:.04em;text-transform:uppercase}
+
+/* SECTION */
+.sec{padding:88px 32px;max-width:1140px;margin:0 auto}
+.sec-tag{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(232,184,75,.2);background:rgba(232,184,75,.05);border-radius:50px;padding:5px 14px;font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:18px}
+.sec-title{font-family:var(--fd);font-size:clamp(32px,4.5vw,52px);font-weight:700;color:var(--snow);margin-bottom:14px;line-height:1.08}
+body[dir=rtl] .sec-title{font-family:var(--far);font-size:clamp(26px,3.5vw,42px);line-height:1.25}
+.sec-title em{font-style:italic;color:var(--gold)}
+.sec-lead{font-size:15px;color:var(--mist);max-width:480px;line-height:1.8}
+
+/* EVENT CARDS */
+.ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px;margin-top:44px}
+.ev-card{background:var(--card);border:1px solid var(--rim);border-radius:var(--rx);overflow:hidden;cursor:pointer;transition:.25s;position:relative}
+.ev-card:hover{border-color:rgba(232,184,75,.4);transform:translateY(-5px);box-shadow:0 20px 48px rgba(0,0,0,.5)}
+.ev-thumb{height:200px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;overflow:hidden}
+.ev-thumb-g{position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(255,255,255,.06),transparent 70%)}
+.ev-stat{position:absolute;top:14px;right:14px;padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+body[dir=rtl] .ev-stat{right:auto;left:14px}
+.ev-cat{position:absolute;top:14px;left:14px;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:600;background:rgba(8,8,14,.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.08);color:var(--ghost)}
+body[dir=rtl] .ev-cat{left:auto;right:14px}
+.sp{background:rgba(123,198,126,.15);color:var(--sage);border:1px solid rgba(123,198,126,.25)}
+.sv{background:rgba(232,184,75,.12);color:var(--gold);border:1px solid rgba(232,184,75,.22)}
+.sd{background:rgba(80,80,117,.2);color:var(--fog);border:1px solid rgba(80,80,117,.3)}
+.sc{background:rgba(255,107,107,.1);color:var(--coral);border:1px solid rgba(255,107,107,.2)}
+.ev-body{padding:18px}
+.ev-name{font-size:16px;font-weight:600;color:var(--snow);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-sub{font-size:12px;color:var(--fog);margin-bottom:14px}
+.ev-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--rim)}
+.ev-price{font-family:var(--fd);font-size:18px;font-weight:600;color:var(--gold)}
+.ev-date{font-size:11px;color:var(--fog)}
+
+/* POLL */
+.poll-band{background:var(--ink2);border-top:1px solid var(--rim);border-bottom:1px solid var(--rim)}
+.poll-inner{max-width:1140px;margin:0 auto;padding:88px 32px;display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:center}
+.poll-card{background:var(--card);border:1px solid var(--rim);border-radius:var(--rx);padding:32px}
+.poll-q{font-size:16px;font-weight:600;color:var(--snow);margin-bottom:24px}
+.poll-opt{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:10px;border:1px solid var(--rim);background:var(--ink3);cursor:pointer;transition:.18s;margin-bottom:10px}
+.poll-opt:hover{border-color:var(--rim2)}.poll-opt.voted{border-color:rgba(232,184,75,.4);background:rgba(232,184,75,.05)}
+.poll-bar{position:absolute;left:0;top:0;height:100%;background:rgba(232,184,75,.06);transition:width .8s cubic-bezier(.4,0,.2,1);pointer-events:none}
+body[dir=rtl] .poll-bar{left:auto;right:0}
+.poll-ico{font-size:22px;position:relative;z-index:1;flex-shrink:0}
+.poll-lbl{flex:1;font-size:13px;color:var(--snow);position:relative;z-index:1}
+.poll-pct{font-size:13px;font-weight:600;color:var(--gold);position:relative;z-index:1}
+.poll-foot{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:18px;border-top:1px solid var(--rim)}
+.poll-cnt{font-size:12px;color:var(--fog)}
+.btn-conv{background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:var(--ink);padding:8px 18px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:.18s}
+.btn-conv:hover{transform:translateY(-1px)}
+
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:44px}
+.feat-card{background:var(--card);border:1px solid var(--rim);border-radius:var(--rl);padding:28px;transition:.22s}
+.feat-card:hover{border-color:rgba(232,184,75,.25);transform:translateY(-3px)}
+.feat-ico{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:18px}
+.feat-title{font-size:15px;font-weight:600;color:var(--snow);margin-bottom:8px}
+.feat-desc{font-size:13px;color:var(--fog);line-height:1.7}
+
+/* THEMES */
+.themes-band{background:var(--ink2);border-top:1px solid var(--rim);border-bottom:1px solid var(--rim)}
+.themes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:36px}
+.theme-card{border-radius:var(--rl);overflow:hidden;cursor:pointer;border:2px solid transparent;transition:.22s}
+.theme-card:hover{transform:scale(1.03);border-color:rgba(232,184,75,.3)}
+.theme-card.on{border-color:var(--gold);box-shadow:0 0 0 2px rgba(232,184,75,.15)}
+.theme-thumb{height:110px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative}
+.theme-thumb-lbl{position:absolute;bottom:8px;right:10px;font-size:10px;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);padding:3px 8px;border-radius:4px;color:rgba(255,255,255,.7);letter-spacing:.04em}
+body[dir=rtl] .theme-thumb-lbl{right:auto;left:10px}
+.theme-meta{background:var(--card);padding:14px}
+.theme-name{font-size:13px;font-weight:600;color:var(--snow);margin-bottom:6px}
+.theme-dots{display:flex;gap:5px}
+.tdot{width:14px;height:14px;border-radius:50%}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;margin-top:44px}
+.testi-card{background:var(--card);border:1px solid var(--rim);border-radius:var(--rl);padding:28px}
+.testi-stars{color:var(--gold);font-size:13px;margin-bottom:14px;letter-spacing:3px}
+.testi-text{font-size:13px;color:var(--mist);line-height:1.8;margin-bottom:20px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:12px}
+.testi-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.testi-name{font-size:13px;font-weight:600;color:var(--snow)}
+.testi-role{font-size:11px;color:var(--fog);margin-top:2px}
+
+/* CTA */
+.cta-band{padding:100px 32px;text-align:center;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(232,184,75,.07) 0%,transparent 70%);border-top:1px solid var(--rim)}
+.cta-h2{font-family:var(--fd);font-size:clamp(36px,5vw,60px);font-weight:700;color:var(--snow);margin-bottom:14px;line-height:1.05}
+body[dir=rtl] .cta-h2{font-family:var(--far);font-size:clamp(28px,4vw,48px);line-height:1.2}
+.cta-h2 em{font-style:italic;color:var(--gold)}
+.cta-lead{font-size:16px;color:var(--mist);margin-bottom:36px}
+
+/* FOOTER */
+footer{background:var(--ink2);border-top:1px solid var(--rim);padding:56px 32px 32px}
+.ft-inner{max-width:1140px;margin:0 auto}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:40px}
+.ft-brand p{font-size:13px;color:var(--fog);line-height:1.75;margin-top:14px}
+.ft-col-title{font-size:12px;font-weight:700;color:var(--ghost);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.ft-link{display:block;font-size:13px;color:var(--fog);padding:4px 0;cursor:pointer;transition:.15s}
+.ft-link:hover{color:var(--ghost)}
+.ft-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:28px;border-top:1px solid var(--rim);font-size:12px;color:var(--fog)}
+.ft-bottom span.g{color:var(--gold)}
+
+/* LOGIN */
+.login-pg{min-height:calc(100vh - 62px);display:flex;align-items:center;justify-content:center;padding:32px;background:radial-gradient(ellipse 60% 60% at 50% 40%,rgba(232,184,75,.06),transparent 70%)}
+.login-box{background:var(--card);border:1px solid var(--rim);border-radius:20px;padding:40px 36px;width:100%;max-width:400px}
+.login-gem{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--ink);font-weight:800;font-family:var(--fd);margin:0 auto 24px}
+.login-title{font-family:var(--fd);font-size:26px;font-weight:700;color:var(--snow);text-align:center;margin-bottom:5px}
+body[dir=rtl] .login-title{font-family:var(--far);font-size:22px}
+.login-sub{font-size:13px;color:var(--fog);text-align:center;margin-bottom:32px}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.flabel{font-size:11px;font-weight:700;color:var(--ghost);text-transform:uppercase;letter-spacing:.08em}
+.finput{background:var(--ink3);border:1px solid var(--rim);border-radius:9px;padding:11px 14px;color:var(--snow);outline:none;width:100%;transition:.18s;font-size:14px}
+.finput:focus{border-color:rgba(232,184,75,.5);background:var(--ink4)}
+.finput.shake{animation:shake .35s ease}
+.login-err{font-size:12px;color:var(--coral);margin-top:4px;display:none}
+.login-err.on{display:block}
+.btn-login{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:var(--ink);padding:13px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;transition:.18s;margin-top:6px}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(232,184,75,.3)}
+.login-hint{font-size:11px;color:var(--fog);text-align:center;margin-top:18px}
+.login-credit{font-size:11px;color:var(--fog);text-align:center;margin-top:28px;padding-top:18px;border-top:1px solid var(--rim)}
+.login-credit span{color:var(--gold)}
+
+/* ADMIN */
+.adm-shell{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 62px)}
+.sidebar{background:var(--ink2);border-right:1px solid var(--rim);display:flex;flex-direction:column;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto}
+.sb-prof{padding:20px 16px 18px;border-bottom:1px solid var(--rim)}
+.sb-prof-row{display:flex;align-items:center;gap:10px}
+.sb-av{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,rgba(232,184,75,.3),rgba(232,184,75,.1));border:1px solid rgba(232,184,75,.25);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--gold);flex-shrink:0}
+.sb-pname{font-size:13px;font-weight:600;color:var(--snow)}
+.sb-prole{font-size:11px;color:var(--fog);margin-top:1px}
+.sb-nav{padding:12px 8px;flex:1}
+.sb-glbl{font-size:10px;font-weight:700;color:var(--fog);text-transform:uppercase;letter-spacing:.1em;padding:0 10px;margin:14px 0 6px}
+.sb-btn{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--mist);background:none;border:none;cursor:pointer;width:100%;text-align:left;transition:.15s;margin-bottom:2px}
+body[dir=rtl] .sb-btn{text-align:right}
+.sb-btn:hover{background:rgba(255,255,255,.05);color:var(--snow)}
+.sb-btn.on{background:rgba(232,184,75,.1);color:var(--gold)}
+.sb-ico{font-size:16px;width:20px;flex-shrink:0;text-align:center}
+.sb-bdg{margin-left:auto;background:var(--coral);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;line-height:16px}
+body[dir=rtl] .sb-bdg{margin-left:0;margin-right:auto}
+.sb-foot{padding:12px 8px 16px;border-top:1px solid var(--rim);margin-top:auto}
+.sb-logout{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;color:var(--fog);background:none;border:none;cursor:pointer;width:100%;text-align:left;transition:.15s}
+body[dir=rtl] .sb-logout{text-align:right}
+.sb-logout:hover{color:var(--coral);background:rgba(255,107,107,.06)}
+.dash-area{padding:28px 32px;overflow-y:auto}
+.dash-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
+.dash-title{font-family:var(--fd);font-size:28px;font-weight:700;color:var(--snow)}
+body[dir=rtl] .dash-title{font-family:var(--far);font-size:22px}
+.dash-sub{font-size:13px;color:var(--fog);margin-top:3px}
+.empty-st{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 20px;text-align:center}
+.empty-ico{font-size:48px;opacity:.25;margin-bottom:20px}
+.empty-ttl{font-size:17px;font-weight:600;color:var(--mist);margin-bottom:8px}
+.empty-desc{font-size:13px;color:var(--fog);margin-bottom:24px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--rim);border-radius:var(--rl);padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--sc,rgba(232,184,75,.08)) 0%,transparent 60%);pointer-events:none}
+.stat-lbl{font-size:11px;font-weight:600;color:var(--fog);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.stat-val{font-family:var(--fd);font-size:30px;font-weight:700;color:var(--snow);line-height:1}
+.stat-emo{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:28px;opacity:.3}
+body[dir=rtl] .stat-emo{right:auto;left:16px}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;font-size:10px;font-weight:700;color:var(--fog);text-transform:uppercase;letter-spacing:.08em;text-align:left;border-bottom:1px solid var(--rim);white-space:nowrap}
+body[dir=rtl] th{text-align:right}
+td{padding:11px 16px;font-size:13px;color:var(--snow);border-bottom:1px solid rgba(44,44,68,.6)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.tbl-card{background:var(--card);border:1px solid var(--rim);border-radius:var(--rl);overflow:hidden}
+.tbl-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--rim)}
+.tbl-title{font-size:14px;font-weight:600;color:var(--snow)}
+.row-ev{display:flex;align-items:center;gap:14px;padding:15px 18px;background:var(--card);border:1px solid var(--rim);border-radius:var(--rl);margin-bottom:10px;transition:.18s}
+.row-ev:hover{border-color:var(--rim2)}
+.row-ev-thumb{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.row-ev-info{flex:1;min-width:0}
+.row-ev-title{font-size:14px;font-weight:600;color:var(--snow);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-ev-meta{font-size:12px;color:var(--fog);margin-top:2px}
+.row-ev-acts{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.fpanel{background:var(--card);border:1px solid var(--rim);border-radius:var(--rl);padding:24px;margin-bottom:16px}
+.fpanel-title{font-size:13px;font-weight:700;color:var(--ghost);text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--rim)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.fselect{background:var(--ink3);border:1px solid var(--rim);border-radius:9px;padding:11px 14px;color:var(--snow);outline:none;width:100%;font-family:inherit;font-size:14px;cursor:pointer}
+.fselect:focus{border-color:rgba(232,184,75,.5)}
+.ftextarea{background:var(--ink3);border:1px solid var(--rim);border-radius:9px;padding:11px 14px;color:var(--snow);outline:none;width:100%;font-family:inherit;font-size:14px;resize:vertical;min-height:90px}
+.ftextarea:focus,.fselect:focus,.finput:focus{border-color:rgba(232,184,75,.5)}
+.abtn{background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:var(--ink);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:.18s}
+.abtn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(232,184,75,.25)}
+.abtn.ghost{background:transparent;border:1px solid var(--rim);color:var(--mist);box-shadow:none}
+.abtn.ghost:hover{border-color:var(--rim2);color:var(--snow)}
+.abtn.danger{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.25);color:var(--coral);box-shadow:none}
+.abtn.danger:hover{background:rgba(255,107,107,.2)}
+.abtn.pub{background:rgba(123,198,126,.12);border:1px solid rgba(123,198,126,.25);color:var(--sage);box-shadow:none}
+.abtn.pub:hover{background:rgba(123,198,126,.22)}
+.abtn.sm{padding:7px 14px;font-size:12px}
+
+/* PUB EVENT */
+.pub-hero{min-height:380px;display:flex;align-items:flex-end;padding:32px;position:relative;overflow:hidden}
+.pub-hero-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:130px;filter:blur(2px);transform:scale(1.12)}
+.pub-hero-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,14,.92) 0%,rgba(8,8,14,.3) 60%,transparent 100%)}
+.pub-hero-cnt{position:relative;z-index:1}
+.pub-back{background:rgba(255,255,255,.08);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;cursor:pointer;margin-bottom:16px;transition:.18s}
+.pub-back:hover{background:rgba(255,255,255,.15)}
+.pub-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pub-title{font-family:var(--fd);font-size:clamp(28px,4vw,46px);font-weight:700;color:#fff;margin-bottom:8px}
+body[dir=rtl] .pub-title{font-family:var(--far);font-size:clamp(22px,3vw,36px)}
+.pub-sub{font-size:14px;color:rgba(255,255,255,.6)}
+.pub-body{max-width:1080px;margin:0 auto;padding:28px 24px 60px;display:grid;grid-template-columns:1fr 320px;gap:24px}
+.pub-sec{background:var(--card);border:1px solid var(--rim);border-radius:var(--rl);padding:22px;margin-bottom:16px}
+.pub-sec-t{font-size:12px;font-weight:700;color:var(--ghost);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.inc-list{list-style:none}
+.inc-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--mist);padding:8px 0;border-bottom:1px solid rgba(44,44,68,.6)}
+.inc-item:last-child{border-bottom:none}
+.inc-chk{width:20px;height:20px;border-radius:50%;background:rgba(123,198,126,.12);border:1px solid rgba(123,198,126,.25);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--sage);flex-shrink:0}
+.cd-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cd-unit{background:var(--ink3);border:1px solid var(--rim);border-radius:9px;padding:14px 8px;text-align:center}
+.cd-n{font-family:var(--fd);font-size:28px;font-weight:700;color:var(--snow);line-height:1}
+.cd-l{font-size:10px;color:var(--fog);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.book-card{background:var(--card);border:1px solid var(--rim);border-radius:var(--rl);padding:24px;position:sticky;top:78px}
+.book-price{font-family:var(--fd);font-size:34px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:3px}
+.book-per{font-size:12px;color:var(--fog);margin-bottom:20px}
+.pkg-opt{border:1px solid var(--rim);border-radius:10px;padding:15px;margin-bottom:10px;cursor:pointer;transition:.18s}
+.pkg-opt:hover{border-color:var(--rim2)}.pkg-opt.on{border-color:rgba(232,184,75,.5);background:rgba(232,184,75,.05)}
+.pkg-name{font-size:14px;font-weight:600;color:var(--snow);margin-bottom:4px}
+.pkg-items{font-size:12px;color:var(--fog);margin-bottom:8px;line-height:1.6}
+.pkg-pr{font-size:16px;font-weight:700;color:var(--gold)}
+.yes-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:var(--ink);padding:15px;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;margin-top:16px;position:relative;overflow:hidden}
+.yes-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(232,184,75,.35)}
+.yes-btn::after{content:'🎉';position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:16px}
+body[dir=rtl] .yes-btn::after{right:auto;left:16px}
+.no-wrap{text-align:center;margin-top:12px;min-height:28px;position:relative}
+.no-btn{font-size:12px;color:var(--fog);background:none;border:none;cursor:pointer;transition:all .25s ease;display:inline-block;position:relative}
+.no-btn:hover{color:var(--mist)}
+.unpub-note{background:rgba(232,184,75,.07);border:1px solid rgba(232,184,75,.2);border-radius:9px;padding:14px;font-size:13px;color:var(--gold);text-align:center;margin-top:12px}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.dc,.tc{background:var(--ink3);border:1px solid var(--rim);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--mist);cursor:pointer;transition:.18s}
+.dc:hover,.tc:hover{border-color:var(--rim2);color:var(--snow)}
+.dc.on,.tc.on{background:rgba(232,184,75,.1);border-color:rgba(232,184,75,.4);color:var(--gold)}
+
+/* REG */
+.reg-wrap{max-width:540px;margin:0 auto;padding:40px 20px 60px}
+.reg-step{display:flex;align-items:center;margin-bottom:36px}
+.rs{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.rs::after{content:'';position:absolute;top:15px;left:50%;width:100%;height:1px;background:var(--rim)}
+.rs:last-child::after{display:none}
+.rs-c{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;z-index:1;transition:.2s}
+.rs-done{background:var(--sage);color:var(--ink)}
+.rs-act{background:var(--gold);color:var(--ink)}
+.rs-todo{background:var(--ink3);border:1px solid var(--rim);color:var(--fog)}
+.rs-lbl{font-size:10px;color:var(--fog);margin-top:6px;text-align:center;letter-spacing:.02em}
+.reg-card{background:var(--card);border:1px solid var(--rim);border-radius:var(--rx);padding:32px}
+.reg-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--snow);margin-bottom:5px}
+body[dir=rtl] .reg-title{font-family:var(--far);font-size:20px}
+.reg-sub{font-size:13px;color:var(--fog);margin-bottom:24px}
+.reg-nav{display:flex;align-items:center;justify-content:space-between;margin-top:28px}
+.inv-wrap{max-width:340px;margin:24px auto}
+.inv-card{border-radius:18px;overflow:hidden}
+.inv-head{padding:28px 24px;text-align:center}
+.inv-emo{font-size:44px;margin-bottom:12px}
+.inv-ev-name{font-family:var(--fd);font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+body[dir=rtl] .inv-ev-name{font-family:var(--far);font-size:19px}
+.inv-ev-sub{font-size:12px;color:rgba(255,255,255,.55)}
+.inv-fields{padding:4px 24px 16px}
+.inv-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.inv-row:last-child{border-bottom:none}
+.inv-k{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4)}
+.inv-v{font-size:13px;font-weight:500;color:#fff}
+.inv-qr-area{padding:16px 24px 20px;text-align:center;border-top:1px solid rgba(255,255,255,.08)}
+.qr-box{width:80px;height:80px;border-radius:9px;margin:0 auto 8px;background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.04em}
+.inv-ref{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.1em}
+.inv-share{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.share-btn{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:12px;cursor:pointer;transition:.18s}
+.share-btn:hover{background:rgba(255,255,255,.12)}
+
+/* BADGE */
+.bdg{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.bdg-std{background:rgba(46,196,182,.12);color:var(--teal);border:1px solid rgba(46,196,182,.22)}
+.bdg-prem{background:rgba(155,140,247,.15);color:var(--violet);border:1px solid rgba(155,140,247,.25)}
+.bdg-conf{background:rgba(123,198,126,.12);color:var(--sage);border:1px solid rgba(123,198,126,.22)}
+
+@media(max-width:900px){
+.adm-shell{grid-template-columns:1fr}.sidebar{display:none}
+.stat-grid{grid-template-columns:repeat(2,1fr)}
+.pub-body{grid-template-columns:1fr}.ft-grid{grid-template-columns:1fr 1fr}
+.poll-inner{grid-template-columns:1fr}.h-stats{gap:28px}
+#nav .n-links{display:none}
+}
+@media(max-width:600px){
+.h-stats{flex-direction:column;gap:20px;align-items:center}
+.fgrid{grid-template-columns:1fr}.stat-grid{grid-template-columns:1fr 1fr}
+.ft-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<nav id="nav">
+  <div class="n-brand" onclick="goHome()">
+    <div class="n-gem">✦</div>
+    <span class="n-mark" id="nw">Safar</span>
+  </div>
+  <div class="n-links">
+    <button class="n-link on" id="nl-home" onclick="goHome()">Home</button>
+    <button class="n-link" id="nl-events" onclick="goEvents()">Events</button>
+  </div>
+  <div class="n-right">
+    <button class="lang-pill" id="lang-pill" onclick="toggleLang()">ع</button>
+    <div id="nav-auth"></div>
+  </div>
+</nav>
+
+<!-- LANDING -->
+<div class="page active" id="p-home">
+  <section class="hero">
+    <div class="h-bg"></div><div class="h-grid"></div>
+    <div class="h-eyebrow"><div class="h-dot"></div><span id="h-ey">Premium Event & Trip Platform</span></div>
+    <h1 class="h-h1" id="h-h1">Your Journey<br><em>Begins Here</em></h1>
+    <p class="h-lead" id="h-lead">Create unforgettable group experiences. Manage trips, events, and gatherings with elegance.</p>
+    <div class="h-cta">
+      <button class="btn-hp" id="h-cta1" onclick="goEvents()">Explore Events</button>
+      <button class="btn-ho" id="h-cta2" onclick="showPage('p-login')">Admin Login</button>
+    </div>
+    <div class="h-stats">
+      <div><div class="h-snum">2,400+</div><div class="h-slbl" id="hs1">Happy Participants</div></div>
+      <div><div class="h-snum">180+</div><div class="h-slbl" id="hs2">Events Organized</div></div>
+      <div><div class="h-snum">98%</div><div class="h-slbl" id="hs3">Satisfaction Rate</div></div>
+    </div>
+  </section>
+  <div class="sec" id="ev-section">
+    <div class="sec-tag" id="s1t">✦ Upcoming</div>
+    <h2 class="sec-title" id="s1h">Featured <em>Events</em></h2>
+    <p class="sec-lead" id="s1l">Discover carefully crafted experiences awaiting you.</p>
+    <div class="ev-grid" id="pub-grid"></div>
+  </div>
+  <div class="poll-band">
+    <div class="poll-inner">
+      <div>
+        <div class="sec-tag" id="s2t">🗳 Vote Now</div>
+        <h2 class="sec-title" id="s2h">Vote for Our<br><em>Next Trip</em></h2>
+        <p class="sec-lead" id="s2l">Help us decide where we're going next. Every vote shapes our upcoming adventures.</p>
+        <div style="margin-top:28px">
+          <div class="h-snum" id="poll-total">0</div>
+          <div class="h-slbl" id="poll-total-lbl">Total votes</div>
+        </div>
+      </div>
+      <div class="poll-card">
+        <div class="poll-q" id="poll-q">Which destination should we visit next?</div>
+        <div id="poll-opts"></div>
+        <div class="poll-foot">
+          <span class="poll-cnt" id="poll-cnt">Be the first to vote</span>
+          <button class="btn-conv" onclick="toast(lang==='ar'?'سيتم التحويل قريباً':'Converting to event...')">Convert to Event →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-tag" id="s3t">⚡ Why Safar</div>
+    <h2 class="sec-title" id="s3h">Everything You <em>Need</em></h2>
+    <div class="feat-grid" id="feat-grid"></div>
+  </div>
+  <div class="themes-band">
+    <div class="sec">
+      <div class="sec-tag" id="s4t">🎨 Themes</div>
+      <h2 class="sec-title" id="s4h">Unique <em>Identity</em> per Event</h2>
+      <p class="sec-lead" id="s4l">Each event gets its own visual atmosphere — colors, typography, and character.</p>
+      <div class="themes-grid" id="themes-grid"></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-tag" id="s5t">💬 Reviews</div>
+    <h2 class="sec-title" id="s5h">What Participants <em>Say</em></h2>
+    <div class="testi-grid" id="testi-grid"></div>
+  </div>
+  <div class="cta-band">
+    <h2 class="cta-h2" id="cta-h2">Ready to Start<br><em>Your Adventure?</em></h2>
+    <p class="cta-lead" id="cta-lead">Join thousands of travelers discovering the world together.</p>
+    <button class="btn-hp" id="cta-btn" onclick="goEvents()">Browse Upcoming Trips</button>
+  </div>
+  <footer>
+    <div class="ft-inner">
+      <div class="ft-grid">
+        <div class="ft-brand">
+          <div class="n-brand"><div class="n-gem">✦</div><span class="n-mark">Safar</span></div>
+          <p id="ft-desc">Premium event and trip management platform designed for extraordinary experiences.</p>
+        </div>
+        <div><div class="ft-col-title" id="fc1">Platform</div>
+          <a class="ft-link" onclick="goHome()">Home</a>
+          <a class="ft-link" onclick="goEvents()">Events</a>
+          <a class="ft-link" onclick="showPage('p-login')">Admin</a>
+        </div>
+        <div><div class="ft-col-title" id="fc2">Features</div>
+          <a class="ft-link" id="fl1">Voting System</a>
+          <a class="ft-link" id="fl2">QR Codes</a>
+          <a class="ft-link" id="fl3">Analytics</a>
+        </div>
+        <div><div class="ft-col-title" id="fc3">Contact</div>
+          <a class="ft-link">hello@safar.io</a>
+          <a class="ft-link">@safar</a>
+        </div>
+      </div>
+      <div class="ft-bottom">
+        <span id="ft-copy">© 2025 Safar. All rights reserved.</span>
+        <span>Project Manager: <span class="g">Mohanad Kadadou</span></span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- LOGIN -->
+<div class="page" id="p-login">
+  <div class="login-pg">
+    <div class="login-box">
+      <div class="login-gem">✦</div>
+      <div class="login-title" id="lt">Admin Login</div>
+      <div class="login-sub" id="ls">Dashboard access is restricted to administrators</div>
+      <div class="field">
+        <label class="flabel" id="ll1">Email Address</label>
+        <input class="finput" type="email" id="li-em" value="admin@safar.io">
+      </div>
+      <div class="field">
+        <label class="flabel" id="ll2">Password</label>
+        <input class="finput" type="password" id="li-pw" placeholder="••••••••••">
+        <div class="login-err" id="login-err">Incorrect password. Hint: admin123</div>
+      </div>
+      <button class="btn-login" id="login-btn" onclick="doLogin()">Sign In →</button>
+      <div class="login-hint" id="login-hint">Demo: admin@safar.io / admin123</div>
+      <div class="login-credit">Project Manager: <span>Mohanad Kadadou</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="p-admin">
+  <div class="adm-shell">
+    <aside class="sidebar">
+      <div class="sb-prof">
+        <div class="sb-prof-row">
+          <div class="sb-av">M</div>
+          <div><div class="sb-pname">Mohanad K.</div><div class="sb-prole" id="sb-role">Platform Admin</div></div>
+        </div>
+      </div>
+      <nav class="sb-nav">
+        <div class="sb-glbl" id="sb-main-lbl">Main</div>
+        <button class="sb-btn on" id="sb-overview" onclick="dash('overview')"><span class="sb-ico">◈</span><span id="sbl-ov">Overview</span></button>
+        <button class="sb-btn" id="sb-events" onclick="dash('events')"><span class="sb-ico">◫</span><span id="sbl-ev">Events</span><span class="sb-bdg" id="bdg-ev" style="display:none">0</span></button>
+        <button class="sb-btn" id="sb-new" onclick="dash('new')"><span class="sb-ico">⊕</span><span id="sbl-new">New Event</span></button>
+        <button class="sb-btn" id="sb-participants" onclick="dash('participants')"><span class="sb-ico">◎</span><span id="sbl-pt">Participants</span><span class="sb-bdg" id="bdg-reg" style="display:none">0</span></button>
+        <button class="sb-btn" id="sb-analytics" onclick="dash('analytics')"><span class="sb-ico">◬</span><span id="sbl-an">Analytics</span></button>
+        <button class="sb-btn" id="sb-polls" onclick="dash('polls')"><span class="sb-ico">◐</span><span id="sbl-po">Polls</span></button>
+      </nav>
+      <div class="sb-foot">
+        <button class="sb-logout" onclick="doLogout()"><span style="font-size:15px">↩</span><span id="sbl-lo">Sign out</span></button>
+      </div>
+    </aside>
+    <div class="dash-area" id="dash-area"></div>
+  </div>
+</div>
+
+<!-- EVENT PAGE -->
+<div class="page" id="p-event"><div id="event-area"></div></div>
+
+<!-- REGISTER -->
+<div class="page" id="p-register"><div id="reg-area"></div></div>
+
+<script>
+/* ══ STORE ══ */
+const PASS='admin123';
+let isAdmin=false,lang='en',events=[],registrations=[],pollVotes={0:0,1:0,2:0,3:0,4:0},myVote=null,currentEvent=null,regStep=0,regData={},activeDash='overview',cdTimer=null;
+
+/* ══ STATIC DATA ══ */
+const POLL=[
+  {e:'🇹🇷',en:'Antalya Beach Trip',ar:'رحلة شاطئ أنطاليا'},
+  {e:'🎈',en:'Cappadocia Adventure',ar:'مغامرة كابادوكيا'},
+  {e:'🌿',en:'Sapanca Nature Tour',ar:'جولة طبيعة سابانجا'},
+  {e:'🇦🇪',en:'Dubai Weekend',ar:'عطلة دبي'},
+  {e:'⛵',en:'Bosphorus Cruise',ar:'رحلة البوسفور'},
+];
+const FEATURES=[
+  {ico:'🗓️',bg:'rgba(46,196,182,.1)',en:{t:'Multi-date Scheduling',d:'Multiple dates and departure times per event with capacity controls.'},ar:{t:'جدولة متعددة التواريخ',d:'تواريخ وأوقات انطلاق متعددة مع ضبط الطاقة الاستيعابية.'}},
+  {ico:'🗳️',bg:'rgba(232,184,75,.1)',en:{t:'Voting System',d:'Participants vote on dates, times, and future destinations.'},ar:{t:'نظام التصويت',d:'يصوت المشاركون على التواريخ والأوقات والوجهات القادمة.'}},
+  {ico:'🎨',bg:'rgba(155,140,247,.1)',en:{t:'Event Themes',d:'Custom visual branding per event — colors, fonts, and identity.'},ar:{t:'ثيمات الفعاليات',d:'هوية بصرية مخصصة لكل فعالية — ألوان وخطوط وتصميم.'}},
+  {ico:'📩',bg:'rgba(255,107,107,.1)',en:{t:'Invitation Cards',d:'Auto-generated beautiful invitations with QR codes.'},ar:{t:'بطاقات الدعوة',d:'بطاقات دعوة جميلة تُنشأ تلقائياً مع رموز QR.'}},
+  {ico:'📊',bg:'rgba(123,198,126,.1)',en:{t:'Advanced Analytics',d:'Real-time insights on registrations, popular choices, and trends.'},ar:{t:'تحليلات متقدمة',d:'رؤى فورية حول التسجيلات والخيارات الأكثر شعبية.'}},
+  {ico:'🌐',bg:'rgba(46,196,182,.1)',en:{t:'Bilingual AR/EN',d:'Full Arabic & English with seamless RTL/LTR switching.'},ar:{t:'ثنائي اللغة',d:'دعم كامل للعربية والإنجليزية مع التبديل السلس.'}},
+  {ico:'📱',bg:'rgba(232,184,75,.1)',en:{t:'Mobile First',d:'Beautiful, responsive experience on any device.'},ar:{t:'محسّن للجوال',d:'تجربة رائعة على أي جهاز وأي حجم شاشة.'}},
+  {ico:'🔐',bg:'rgba(155,140,247,.1)',en:{t:'Protected Admin',d:'Secure login for admins. Guests access via public links only.'},ar:{t:'داش بورد محمي',d:'تسجيل دخول آمن للمديرين. الزوار عبر الروابط العامة فقط.'}},
+];
+const THEMES=[
+  {name:{en:'Ocean Blue',ar:'أزرق المحيط'},e:'🏖️',bg:'linear-gradient(135deg,#062d4a,#0a4a6e)',p:'#0ea5e9',s:'#0891b2',a:'#7dd3fc'},
+  {name:{en:'Desert Gold',ar:'ذهبي الصحراء'},e:'🐪',bg:'linear-gradient(135deg,#2d1a04,#4a2c08)',p:'#e8b84b',s:'#c99a2e',a:'#fde68a'},
+  {name:{en:'Forest Green',ar:'أخضر الغابة'},e:'🏔️',bg:'linear-gradient(135deg,#051a0c,#0a2e18)',p:'#4ade80',s:'#16a34a',a:'#bbf7d0'},
+  {name:{en:'Midnight Violet',ar:'بنفسجي الليل'},e:'⛵',bg:'linear-gradient(135deg,#0f0b2a,#1a1245)',p:'#9b8cf7',s:'#7c6ff7',a:'#ddd6fe'},
+];
+const TESTI=[
+  {s:5,en:{t:'The platform made organizing our beach trip for 40 people feel effortless. The invitation cards were gorgeous!',n:'Sarah M.',r:'Trip Organizer'},ar:{t:'جعلت المنصة تنظيم رحلة الشاطئ لـ٤٠ شخصاً أمراً سهلاً. بطاقات الدعوة كانت رائعة!',n:'سارة م.',r:'منظمة رحلات'}},
+  {s:5,en:{t:'The voting system is brilliant. We finally got everyone to agree on a date without endless WhatsApp messages!',n:'Ahmed K.',r:'Community Manager'},ar:{t:'نظام التصويت رائع. أخيراً أمكننا الاتفاق على موعد دون رسائل واتساب لا نهاية لها!',n:'أحمد ك.',r:'مدير مجتمع'}},
+  {s:5,en:{t:'Every event having its own visual theme is absolutely brilliant. Our yacht party invitation looked incredible.',n:'Layla R.',r:'Event Planner'},ar:{t:'فكرة ثيم بصري لكل فعالية رائعة تماماً. كانت دعوة حفلة اليخت تبدو مذهلة.',n:'ليلى ر.',r:'مخططة فعاليات'}},
+];
+const EV_COLORS=[
+  {bg:'linear-gradient(135deg,#062d4a,#0a4a6e)',th:'rgba(14,165,233,.18)'},
+  {bg:'linear-gradient(135deg,#2d1a04,#4a2c08)',th:'rgba(232,184,75,.18)'},
+  {bg:'linear-gradient(135deg,#051a0c,#0a2e18)',th:'rgba(74,222,128,.18)'},
+  {bg:'linear-gradient(135deg,#0f0b2a,#1a1245)',th:'rgba(155,140,247,.18)'},
+  {bg:'linear-gradient(135deg,#2d0a0a,#4a0f0f)',th:'rgba(255,107,107,.18)'},
+  {bg:'linear-gradient(135deg,#0a2a2a,#0f4040)',th:'rgba(46,196,182,.18)'},
+];
+
+/* ══ TRANSLATIONS ══ */
+const TR={
+  en:{nw:'Safar',langPill:'ع',hEy:'Premium Event & Trip Platform',hH1:'Your Journey<br><em>Begins Here</em>',hLead:'Create unforgettable group experiences. Manage trips, events, and gatherings with elegance.',hCta1:'Explore Events',hCta2:'Admin Login',hs1:'Happy Participants',hs2:'Events Organized',hs3:'Satisfaction Rate',s1t:'✦ Upcoming',s1h:'Featured <em>Events</em>',s1l:'Discover carefully crafted experiences awaiting you.',s2t:'🗳 Vote Now',s2h:'Vote for Our<br><em>Next Trip</em>',s2l:"Help us decide where we're going next.",pollQ:'Which destination should we visit next?',pollTotalLbl:'Total votes',pollCnt0:'Be the first to vote',s3t:'⚡ Why Safar',s3h:'Everything You <em>Need</em>',s4t:'🎨 Themes',s4h:'Unique <em>Identity</em> per Event',s4l:'Each event gets its own visual atmosphere.',s5t:'💬 Reviews',s5h:'What Participants <em>Say</em>',ctaH2:'Ready to Start<br><em>Your Adventure?</em>',ctaLead:'Join thousands of travelers discovering the world together.',ctaBtn:'Browse Upcoming Trips',ftDesc:'Premium event and trip management platform.',fc1:'Platform',fc2:'Features',fc3:'Contact',fl1:'Voting System',fl2:'QR Codes',fl3:'Analytics',ftCopy:'© 2025 Safar. All rights reserved.',lt:'Admin Login',ls:'Dashboard access is restricted to administrators',ll1:'Email Address',ll2:'Password',loginBtn:'Sign In →',loginHint:'Demo: admin@safar.io / admin123',loginErr:'Incorrect password. Hint: admin123',sbRole:'Platform Admin',sbMainLbl:'Main',sblOv:'Overview',sblEv:'Events',sblNew:'New Event',sblPt:'Participants',sblAn:'Analytics',sblPo:'Polls',sblLo:'Sign out',dashOvTitle:'Overview',dashOvSub:'Welcome back, Mohanad 👋',noEvTitle:'No events yet',noEvDesc:'Create your first event to get started.',createFirst:'Create Event',statTotal:'Total Events',statPub:'Published',statReg:'Registrations',statDraft:'Awaiting Publish',evTitle:'All Events',createNew:'+ New Event',pubBtn:'Publish',viewBtn:'View',delBtn:'Delete',newEvTitle:'Create New Event',basicInfo:'Basic Information',tripInfo:'Trip Details',pricingInfo:'Pricing & Package',fEvTitle:'Event Title',fEvTitlePh:'e.g. Beach Trip to Antalya',fEvSub:'Subtitle',fEvSubPh:'Short tagline',fEvEmo:'Event Emoji',fEvEmoPh:'🏖️',fEvDesc:'Description',fEvDescPh:'Tell participants what to expect...',fEvDate:'Available Date',fEvTime:'Departure Time',fEvCat:'Category',fEvStatus:'Status',fMeet:'Meeting Point',fMeetPh:'e.g. Taksim Square, Istanbul',fPkgName:'Package Name',fPkgNamePh:'Standard Package',fPkgPrice:'Price ($)',fPkgPricePh:'0 = free',fPkgItems:"What's Included",fPkgItemsPh:'Transportation, Breakfast, Guide',saveEv:'Save Event',savingEv:'Saving...',savedEv:'Event saved!',cancelBtn:'Cancel',sDraft:'Draft',sVoting:'Voting',sPublished:'Published',sClosed:'Closed',noRegTitle:'No registrations yet',noRegDesc:'Participants will appear once people register.',colName:'Name',colPhone:'Phone',colEvent:'Event',colPkg:'Package',colDate:'Date',colTime:'Time',exportCsv:'Export CSV',anTitle:'Analytics',anEmpty:'Register some participants to see analytics.',pollsTitle:'Future Trip Polls',backBtn:'← All Events',pubIncl:"What's Included",pubMeet:'Meeting Point',pubCD:'Countdown',cdDays:'Days',cdHrs:'Hours',cdMins:'Mins',cdSecs:'Secs',pubBookBtn:"Yes, I'm Coming!",pubNoBtn:'Maybe not…',perPerson:'per person',freeLabel:'Free',notPub:'This event is not yet published.',regS:['Package','Date','Time','Details','Done'],regPkg:'Choose a Package',regDate:'Pick a Date',regTime:'Pick a Time',regDets:'Your Details',regDone:'Booking Confirmed!',regSubPkg:'Select the package that suits you',regSubDate:'Available dates',regSubTime:'Departure times',regSubDets:'Enter your information to complete registration',regSubDone:"You're all set! Your invitation is ready.",regName:'Full Name',regNamePh:'Ahmed Al-Rashid',regPhone:'Phone Number',regPhonePh:'+90 555 000 0000',regNotes:'Notes (optional)',regNotesPh:'Any special requests…',regRequired:'Name and phone are required.',regBack:'← Back',regNext:'Next →',regConfirmBtn:'Confirm Booking',regBackHome:'← Back to events',refLbl:'Booking Reference',invReady:'Your Invitation Card',livePreview:'Live Preview',cancelBtn2:'Cancel',},
+  ar:{nw:'سفر',langPill:'EN',hEy:'منصة فعاليات ورحلات متميزة',hH1:'رحلتك<br><em>تبدأ هنا</em>',hLead:'أنشئ تجارب جماعية لا تُنسى. أدر الرحلات والفعاليات والتجمعات بأناقة.',hCta1:'استكشف الفعاليات',hCta2:'دخول المدير',hs1:'مشارك سعيد',hs2:'فعالية منظمة',hs3:'نسبة الرضا',s1t:'✦ قادمة',s1h:'الفعاليات <em>المميزة</em>',s1l:'اكتشف تجارب مُعدّة بعناية تنتظرك.',s2t:'🗳 صوّت الآن',s2h:'صوّت لرحلتنا<br><em>القادمة</em>',s2l:'ساعدنا في تحديد وجهتنا القادمة.',pollQ:'أي وجهة تريد في رحلتنا القادمة؟',pollTotalLbl:'إجمالي الأصوات',pollCnt0:'كن أول من يصوت',s3t:'⚡ لماذا سفر',s3h:'كل ما <em>تحتاجه</em>',s4t:'🎨 الثيمات',s4h:'هوية <em>بصرية</em> لكل فعالية',s4l:'لكل فعالية ثيم مميز — ألوان وخطوط وأجواء.',s5t:'💬 آراء',s5h:'ماذا يقول <em>المشاركون</em>',ctaH2:'هل أنت مستعد<br><em>لمغامرتك؟</em>',ctaLead:'انضم لآلاف المسافرين الذين يكتشفون العالم معاً.',ctaBtn:'تصفح الرحلات القادمة',ftDesc:'منصة متميزة لإدارة الفعاليات والرحلات.',fc1:'المنصة',fc2:'المميزات',fc3:'التواصل',fl1:'نظام التصويت',fl2:'رموز QR',fl3:'التحليلات',ftCopy:'© ٢٠٢٥ سفر. جميع الحقوق محفوظة.',lt:'تسجيل دخول المدير',ls:'الوصول للوحة التحكم محمي للمديرين فقط',ll1:'البريد الإلكتروني',ll2:'كلمة المرور',loginBtn:'دخول ←',loginHint:'تجريبي: admin@safar.io / admin123',loginErr:'كلمة مرور خاطئة. التلميح: admin123',sbRole:'مدير المنصة',sbMainLbl:'الرئيسي',sblOv:'نظرة عامة',sblEv:'الفعاليات',sblNew:'فعالية جديدة',sblPt:'المشاركون',sblAn:'التحليلات',sblPo:'الاستطلاعات',sblLo:'تسجيل الخروج',dashOvTitle:'نظرة عامة',dashOvSub:'أهلاً بك، مهند 👋',noEvTitle:'لا توجد فعاليات بعد',noEvDesc:'أنشئ فعاليتك الأولى للبدء.',createFirst:'إنشاء فعالية',statTotal:'إجمالي الفعاليات',statPub:'منشورة',statReg:'التسجيلات',statDraft:'تنتظر النشر',evTitle:'جميع الفعاليات',createNew:'+ فعالية جديدة',pubBtn:'نشر',viewBtn:'عرض',delBtn:'حذف',newEvTitle:'إنشاء فعالية جديدة',basicInfo:'المعلومات الأساسية',tripInfo:'تفاصيل الرحلة',pricingInfo:'السعر والباقة',fEvTitle:'عنوان الفعالية',fEvTitlePh:'مثال: رحلة شاطئ أنطاليا',fEvSub:'العنوان الفرعي',fEvSubPh:'وصف مختصر',fEvEmo:'رمز الفعالية',fEvEmoPh:'🏖️',fEvDesc:'التفاصيل',fEvDescPh:'أخبر المشاركين بما سيحدث...',fEvDate:'التاريخ المتاح',fEvTime:'وقت الانطلاق',fEvCat:'الفئة',fEvStatus:'الحالة',fMeet:'نقطة التجمع',fMeetPh:'مثال: ميدان تقسيم، إسطنبول',fPkgName:'اسم الباقة',fPkgNamePh:'الباقة المعيارية',fPkgPrice:'السعر ($)',fPkgPricePh:'0 = مجاناً',fPkgItems:'ما يشمله',fPkgItemsPh:'مواصلات، إفطار، مرشد',saveEv:'حفظ الفعالية',savingEv:'جاري الحفظ...',savedEv:'تم حفظ الفعالية!',cancelBtn:'إلغاء',sDraft:'مسودة',sVoting:'تصويت',sPublished:'منشورة',sClosed:'مغلقة',noRegTitle:'لا توجد تسجيلات بعد',noRegDesc:'ستظهر التسجيلات هنا بعد تسجيل المشاركين.',colName:'الاسم',colPhone:'الهاتف',colEvent:'الفعالية',colPkg:'الباقة',colDate:'التاريخ',colTime:'الوقت',exportCsv:'تصدير CSV',anTitle:'التحليلات',anEmpty:'سجّل مشاركين أولاً لعرض التحليلات.',pollsTitle:'استطلاعات الرحلات القادمة',backBtn:'← جميع الفعاليات',pubIncl:'ما يشمله',pubMeet:'نقطة التجمع',pubCD:'العد التنازلي',cdDays:'أيام',cdHrs:'ساعات',cdMins:'دقائق',cdSecs:'ثواني',pubBookBtn:'نعم، سأحضر!',pubNoBtn:'ربما لا...',perPerson:'لكل شخص',freeLabel:'مجاناً',notPub:'هذه الفعالية غير منشورة بعد.',regS:['الباقة','التاريخ','الوقت','البيانات','تأكيد'],regPkg:'اختر الباقة',regDate:'اختر التاريخ',regTime:'اختر الوقت',regDets:'بياناتك',regDone:'تم تأكيد الحجز!',regSubPkg:'اختر الباقة المناسبة',regSubDate:'التواريخ المتاحة',regSubTime:'أوقات الانطلاق',regSubDets:'أدخل بياناتك لإكمال التسجيل',regSubDone:'تم كل شيء! بطاقة دعوتك جاهزة.',regName:'الاسم الكامل',regNamePh:'أحمد الراشد',regPhone:'رقم الهاتف',regPhonePh:'+966 5X XXX XXXX',regNotes:'ملاحظات (اختياري)',regNotesPh:'أي طلبات خاصة...',regRequired:'الاسم والهاتف مطلوبان.',regBack:'→ رجوع',regNext:'التالي ←',regConfirmBtn:'تأكيد الحجز',regBackHome:'← العودة للفعاليات',refLbl:'رقم الحجز',invReady:'بطاقة دعوتك',livePreview:'معاينة مباشرة',cancelBtn2:'إلغاء',}
+};
+const t=k=>(TR[lang][k]||TR.en[k]||k);
+
+/* ══ UTILS ══ */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('on');
+  setTimeout(()=>el.classList.remove('on'),2400);
+}
+function goHome(){showPage('p-home');renderPubGrid();renderPoll();setNavOn('home')}
+function goEvents(){
+  showPage('p-home');renderPubGrid();renderPoll();setNavOn('events');
+  setTimeout(()=>document.getElementById('ev-section').scrollIntoView({behavior:'smooth',block:'start'}),150);
+}
+function setNavOn(k){
+  ['home','events'].forEach(n=>document.getElementById('nl-'+n).classList.toggle('on',n===k));
+}
+
+/* ══ LANG ══ */
+function toggleLang(){
+  lang=lang==='en'?'ar':'en';
+  document.body.setAttribute('dir',lang==='ar'?'rtl':'ltr');
+  document.documentElement.setAttribute('lang',lang);
+  refreshTexts();
+  const ap=document.querySelector('.page.active').id;
+  if(ap==='p-home'){renderPubGrid();renderPoll();renderFeatures();renderThemes();renderTestimonials();}
+  if(ap==='p-admin')dash(activeDash);
+  if(ap==='p-event'&&currentEvent)renderEventPage();
+  if(ap==='p-register')renderReg();
+}
+function refreshTexts(){
+  const map={
+    nw:'nw','lang-pill':'langPill','h-ey':'hEy','h-lead':'hLead',
+    'h-cta1':'hCta1','h-cta2':'hCta2',hs1:'hs1',hs2:'hs2',hs3:'hs3',
+    's1t':'s1t','s1l':'s1l','s2l':'s2l',
+    's3t':'s3t','s4t':'s4t','s4l':'s4l','s5t':'s5t',
+    'cta-lead':'ctaLead','cta-btn':'ctaBtn',
+    'ft-desc':'ftDesc',fc1:'fc1',fc2:'fc2',fc3:'fc3',fl1:'fl1',fl2:'fl2',fl3:'fl3',
+    'ft-copy':'ftCopy',
+    lt:'lt',ls:'ls',ll1:'ll1',ll2:'ll2','login-btn':'loginBtn',
+    'login-hint':'loginHint','login-err':'loginErr',
+    'sb-role':'sbRole','sb-main-lbl':'sbMainLbl',
+    'sbl-ov':'sblOv','sbl-ev':'sblEv','sbl-new':'sblNew',
+    'sbl-pt':'sblPt','sbl-an':'sblAn','sbl-po':'sblPo','sbl-lo':'sblLo',
+  };
+  for(const[id,key]of Object.entries(map)){
+    const el=document.getElementById(id);if(!el)continue;
+    el.textContent=t(key);
+  }
+  const inner=['h-h1','s1h','s2h','s3h','s4h','s5h','cta-h2','poll-q'];
+  const inMap={
+    'h-h1':'hH1','s1h':'s1h','s2h':'s2h','s3h':'s3h','s4h':'s4h','s5h':'s5h',
+    'cta-h2':'ctaH2','poll-q':'pollQ',
+  };
+  for(const[id,key]of Object.entries(inMap)){
+    const el=document.getElementById(id);if(el)el.innerHTML=t(key);
+  }
+  renderNavAuth();
+}
+
+/* ══ AUTH ══ */
+function renderNavAuth(){
+  const el=document.getElementById('nav-auth');if(!el)return;
+  if(isAdmin){
+    el.innerHTML=`<button class="btn-g" onclick="showPage('p-admin');dash('overview')">${lang==='ar'?'لوحة التحكم':'Dashboard'}</button>`;
+  }else{
+    el.innerHTML=`<button class="btn-g" onclick="showPage('p-login')">${lang==='ar'?'دخول المدير':'Admin Login'}</button>`;
+  }
+}
+function doLogin(){
+  const pw=document.getElementById('li-pw').value;
+  const err=document.getElementById('login-err');
+  const btn=document.getElementById('login-btn');
+  if(pw===PASS){
+    isAdmin=true;err.classList.remove('on');btn.textContent='✓';
+    renderNavAuth();
+    setTimeout(()=>{showPage('p-admin');dash('overview');},350);
+  }else{
+    err.classList.add('on');
+    const inp=document.getElementById('li-pw');
+    inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),400);
+  }
+}
+document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+function doLogout(){isAdmin=false;renderNavAuth();goHome();}
+
+/* ══ LANDING RENDERS ══ */
+function renderPubGrid(){
+  const el=document.getElementById('pub-grid');if(!el)return;
+  const pub=events.filter(e=>e.status==='published');
+  if(!pub.length){
+    el.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 20px">
+      <div style="font-size:40px;opacity:.2;margin-bottom:16px">◈</div>
+      <div style="font-size:16px;font-weight:500;color:var(--mist);margin-bottom:6px">${lang==='ar'?'لا توجد فعاليات منشورة حالياً':'No published events yet'}</div>
+      <div style="font-size:13px;color:var(--fog)">${lang==='ar'?'تابع قريباً!':'Check back soon!'}</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML=pub.map(e=>{
+    const cl=EV_COLORS[e.ci||0];
+    const pr=e.price>0?'$'+e.price:e.price===0?t('freeLabel'):'';
+    return`<div class="ev-card" onclick="openEvent('${e.id}')">
+      <div class="ev-thumb" style="background:${cl.bg}">
+        <div class="ev-thumb-g"></div>
+        <div style="animation:float 3s ease-in-out infinite">${e.emoji||'◈'}</div>
+        <span class="ev-cat">${e.cat||''}</span>
+        <span class="ev-stat sp">${lang==='ar'?'منشورة':'Open'}</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-name">${e.title}</div>
+        <div class="ev-sub">${e.sub||''}</div>
+      </div>
+      <div class="ev-foot">
+        <span class="ev-price">${pr}</span>
+        <span class="ev-date">${e.date?'📅 '+e.date:''}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPoll(){
+  const el=document.getElementById('poll-opts');if(!el)return;
+  const total=Object.values(pollVotes).reduce((a,b)=>a+b,0);
+  el.innerHTML=POLL.map((p,i)=>{
+    const pct=total>0?Math.round(pollVotes[i]/total*100):0;
+    return`<div class="poll-opt${myVote===i?' voted':''}" onclick="votePoll(${i})">
+      <div class="poll-bar" style="width:${pct}%"></div>
+      <span class="poll-ico">${p.e}</span>
+      <span class="poll-lbl">${lang==='ar'?p.ar:p.en}</span>
+      <span class="poll-pct">${total>0?pct+'%':''}</span>
+    </div>`;
+  }).join('');
+  const cnt=document.getElementById('poll-cnt');
+  const tot=document.getElementById('poll-total');
+  if(cnt)cnt.textContent=total>0?total+' '+(lang==='ar'?'صوت':'votes'):t('pollCnt0');
+  if(tot)tot.textContent=total;
+}
+function votePoll(i){
+  if(myVote!==null)pollVotes[myVote]--;
+  myVote=i;pollVotes[i]++;
+  renderPoll();
+}
+
+function renderFeatures(){
+  const el=document.getElementById('feat-grid');if(!el)return;
+  el.innerHTML=FEATURES.map(f=>`<div class="feat-card">
+    <div class="feat-ico" style="background:${f.bg}">${f.ico}</div>
+    <div class="feat-title">${lang==='ar'?f.ar.t:f.en.t}</div>
+    <div class="feat-desc">${lang==='ar'?f.ar.d:f.en.d}</div>
+  </div>`).join('');
+}
+
+function renderThemes(){
+  const el=document.getElementById('themes-grid');if(!el)return;
+  el.innerHTML=THEMES.map((th,i)=>`<div class="theme-card" id="tc-${i}" onclick="selectTheme(${i})">
+    <div class="theme-thumb" style="background:${th.bg}">
+      <span style="font-size:38px">${th.e}</span>
+      <span class="theme-thumb-lbl">PREVIEW</span>
+    </div>
+    <div class="theme-meta">
+      <div class="theme-name">${lang==='ar'?th.name.ar:th.name.en}</div>
+      <div class="theme-dots">
+        <div class="tdot" style="background:${th.p}"></div>
+        <div class="tdot" style="background:${th.s}"></div>
+        <div class="tdot" style="background:${th.a}"></div>
+      </div>
+    </div>
+  </div>`).join('');
+}
+function selectTheme(i){
+  document.querySelectorAll('.theme-card').forEach((c,j)=>c.classList.toggle('on',j===i));
+}
+
+function renderTestimonials(){
+  const el=document.getElementById('testi-grid');if(!el)return;
+  const avBg=['rgba(46,196,182,.2)','rgba(232,184,75,.2)','rgba(155,140,247,.2)'];
+  el.innerHTML=TESTI.map((t_,i)=>{
+    const d=lang==='ar'?t_.ar:t_.en;
+    return`<div class="testi-card">
+      <div class="testi-stars">${'★'.repeat(t_.s)}</div>
+      <p class="testi-text">"${d.t}"</p>
+      <div class="testi-author">
+        <div class="testi-av" style="background:${avBg[i]}">${d.n.charAt(0)}</div>
+        <div><div class="testi-name">${d.n}</div><div class="testi-role">${d.r}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ══ DASH ══ */
+function dash(sec){
+  activeDash=sec;
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('on'));
+  const el=document.getElementById('sb-'+sec.replace('-',''));
+  if(el)el.classList.add('on');
+  updateBadges();
+  const da=document.getElementById('dash-area');if(!da)return;
+  if(sec==='overview')da.innerHTML=dOverview();
+  else if(sec==='events')da.innerHTML=dEvents();
+  else if(sec==='new')da.innerHTML=dNew();
+  else if(sec==='participants')da.innerHTML=dParticipants();
+  else if(sec==='analytics')da.innerHTML=dAnalytics();
+  else if(sec==='polls')da.innerHTML=dPolls();
+}
+function updateBadges(){
+  const be=document.getElementById('bdg-ev');
+  const br=document.getElementById('bdg-reg');
+  if(be){be.textContent=events.length;be.style.display=events.length?'inline':'none';}
+  if(br){br.textContent=registrations.length;br.style.display=registrations.length?'inline':'none';}
+}
+
+function dOverview(){
+  const pub=events.filter(e=>e.status==='published').length;
+  const draft=events.filter(e=>e.status==='draft').length;
+  if(!events.length){
+    return`<div class="dash-head"><div><div class="dash-title">${t('dashOvTitle')}</div><div class="dash-sub">${t('dashOvSub')}</div></div></div>
+    <div class="empty-st"><div class="empty-ico">◈</div><div class="empty-ttl">${t('noEvTitle')}</div><div class="empty-desc">${t('noEvDesc')}</div>
+    <button class="abtn" onclick="dash('new')">${t('createFirst')}</button></div>`;
+  }
+  const recentHTML=registrations.length?`<div class="tbl-card" style="margin-top:20px">
+    <div class="tbl-head"><div class="tbl-title">${lang==='ar'?'آخر التسجيلات':'Recent Registrations'}</div></div>
+    <div style="overflow-x:auto"><table><thead><tr>
+      ${['colName','colEvent','colDate','colTime'].map(k=>`<th>${t(k)}</th>`).join('')}
+    </tr></thead><tbody>
+      ${registrations.slice(-5).reverse().map(r=>{
+        const ev=events.find(e=>e.id===r.eid)||{};
+        return`<tr><td style="font-weight:500">${r.name}</td><td style="color:var(--mist)">${ev.title||'—'}</td><td style="color:var(--fog)">${r.date||'—'}</td><td style="color:var(--fog)">${r.time||'—'}</td></tr>`;
+      }).join('')}
+    </tbody></table></div>
+  </div>`:'';
+  return`<div class="dash-head">
+    <div><div class="dash-title">${t('dashOvTitle')}</div><div class="dash-sub">${t('dashOvSub')}</div></div>
+    <button class="abtn" onclick="dash('new')">${t('createNew')}</button>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card" style="--sc:rgba(232,184,75,.08)"><div class="stat-lbl">${t('statTotal')}</div><div class="stat-val">${events.length}</div><div class="stat-emo">◫</div></div>
+    <div class="stat-card" style="--sc:rgba(123,198,126,.08)"><div class="stat-lbl">${t('statPub')}</div><div class="stat-val" style="color:var(--sage)">${pub}</div><div class="stat-emo">◈</div></div>
+    <div class="stat-card" style="--sc:rgba(155,140,247,.08)"><div class="stat-lbl">${t('statReg')}</div><div class="stat-val" style="color:var(--violet)">${registrations.length}</div><div class="stat-emo">◎</div></div>
+    <div class="stat-card" style="--sc:rgba(46,196,182,.08)"><div class="stat-lbl">${t('statDraft')}</div><div class="stat-val" style="color:var(--teal)">${draft}</div><div class="stat-emo">◬</div></div>
+  </div>${recentHTML}`;
+}
+
+function dEvents(){
+  if(!events.length){
+    return`<div class="dash-head"><div><div class="dash-title">${t('evTitle')}</div></div><button class="abtn" onclick="dash('new')">${t('createNew')}</button></div>
+    <div class="empty-st"><div class="empty-ico">◫</div><div class="empty-ttl">${t('noEvTitle')}</div><div class="empty-desc">${t('noEvDesc')}</div>
+    <button class="abtn" onclick="dash('new')">${t('createFirst')}</button></div>`;
+  }
+  const statMap={published:'sp',voting:'sv',draft:'sd',closed:'sc'};
+  const statLbl={published:t('sPublished'),voting:t('sVoting'),draft:t('sDraft'),closed:t('sClosed')};
+  const rows=events.map(e=>{
+    const cl=EV_COLORS[e.ci||0];
+    const regs=registrations.filter(r=>r.eid===e.id).length;
+    const meta=[e.date,e.time,regs?regs+' '+(lang==='ar'?'مشارك':'regs'):''].filter(Boolean).join(' · ');
+    const pubB=e.status==='draft'?`<button class="abtn pub sm" onclick="publishEv('${e.id}')">${t('pubBtn')}</button>`:'';
+    return`<div class="row-ev">
+      <div class="row-ev-thumb" style="background:${cl.th}">${e.emoji||'◈'}</div>
+      <div class="row-ev-info"><div class="row-ev-title">${e.title}</div><div class="row-ev-meta">${meta}</div></div>
+      <div class="row-ev-acts">
+        <span class="ev-stat ${statMap[e.status]||'sd'}" style="position:static">${statLbl[e.status]||e.status}</span>
+        ${pubB}
+        <button class="abtn ghost sm" onclick="openEvent('${e.id}')">${t('viewBtn')}</button>
+        <button class="abtn danger sm" onclick="deleteEv('${e.id}')">${t('delBtn')}</button>
+      </div>
+    </div>`;
+  }).join('');
+  return`<div class="dash-head">
+    <div><div class="dash-title">${t('evTitle')}</div><div class="dash-sub">${events.length} ${lang==='ar'?'فعالية':'events'}</div></div>
+    <button class="abtn" onclick="dash('new')">${t('createNew')}</button>
+  </div>${rows}`;
+}
+function publishEv(id){
+  const ev=events.find(e=>e.id===id);
+  if(ev){ev.status='published';toast(lang==='ar'?'✓ تم نشر الفعالية':'✓ Event published');dash('events');}
+}
+function deleteEv(id){
+  if(!confirm(lang==='ar'?'هل أنت متأكد من الحذف؟':'Delete this event?'))return;
+  events=events.filter(e=>e.id!==id);
+  registrations=registrations.filter(r=>r.eid!==id);
+  toast(lang==='ar'?'تم الحذف':'Deleted');dash('events');
+}
+
+function dNew(){
+  const cats_en=['Beach','Adventure','Desert','Luxury','Mountains','City','Workshop','Concert'];
+  const cats_ar=['شاطئ','مغامرة','صحراء','رفاهية','جبال','مدينة','ورشة','حفلة'];
+  const cats=lang==='ar'?cats_ar:cats_en;
+  const sts_en=['draft','voting','published','closed'];
+  const sts_lbl_en=['Draft','Voting','Published','Closed'];
+  const sts_lbl_ar=['مسودة','تصويت','منشورة','مغلقة'];
+  const stLbl=lang==='ar'?sts_lbl_ar:sts_lbl_en;
+  return`<div class="dash-head"><div><div class="dash-title">${t('newEvTitle')}</div></div></div>
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start">
+  <div>
+  <div class="fpanel">
+    <div class="fpanel-title">${t('basicInfo')}</div>
+    <div class="frow" style="margin-bottom:12px"><label class="flabel">${t('fEvTitle')} *</label>
+      <input class="finput" id="fe-title" placeholder="${t('fEvTitlePh')}" oninput="lp()">
+    </div>
+    <div class="fgrid" style="margin-bottom:12px">
+      <div class="frow"><label class="flabel">${t('fEvSub')}</label><input class="finput" id="fe-sub" placeholder="${t('fEvSubPh')}" oninput="lp()"></div>
+      <div class="frow"><label class="flabel">${t('fEvEmo')}</label><input class="finput" id="fe-emo" placeholder="${t('fEvEmoPh')}" maxlength="4" oninput="lp()"></div>
+    </div>
+    <div class="fgrid" style="margin-bottom:12px">
+      <div class="frow"><label class="flabel">${t('fEvCat')}</label>
+        <select class="fselect" id="fe-cat">${cats.map((c,i)=>`<option value="${cats_en[i]}">${c}</option>`).join('')}</select>
+      </div>
+      <div class="frow"><label class="flabel">${t('fEvStatus')}</label>
+        <select class="fselect" id="fe-status">${sts_en.map((s,i)=>`<option value="${s}">${stLbl[i]}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="frow"><label class="flabel">${t('fEvDesc')}</label>
+      <textarea class="ftextarea" id="fe-desc" placeholder="${t('fEvDescPh')}"></textarea>
+    </div>
+  </div>
+  <div class="fpanel">
+    <div class="fpanel-title">${t('tripInfo')}</div>
+    <div class="fgrid" style="margin-bottom:12px">
+      <div class="frow"><label class="flabel">${t('fEvDate')}</label><input class="finput" id="fe-date" type="date"></div>
+      <div class="frow"><label class="flabel">${t('fEvTime')}</label><input class="finput" id="fe-time" type="time" value="08:00"></div>
+    </div>
+    <div class="frow"><label class="flabel">${t('fMeet')}</label><input class="finput" id="fe-meet" placeholder="${t('fMeetPh')}"></div>
+  </div>
+  <div class="fpanel">
+    <div class="fpanel-title">${t('pricingInfo')}</div>
+    <div class="fgrid" style="margin-bottom:12px">
+      <div class="frow"><label class="flabel">${t('fPkgName')}</label><input class="finput" id="fe-pkgname" placeholder="${t('fPkgNamePh')}" oninput="lp()"></div>
+      <div class="frow"><label class="flabel">${t('fPkgPrice')}</label><input class="finput" id="fe-price" type="number" min="0" placeholder="${t('fPkgPricePh')}" oninput="lp()"></div>
+    </div>
+    <div class="frow"><label class="flabel">${t('fPkgItems')}</label><input class="finput" id="fe-items" placeholder="${t('fPkgItemsPh')}" oninput="lp()"></div>
+  </div>
+  <div style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:32px">
+    <button class="abtn ghost" onclick="dash('events')">${t('cancelBtn')}</button>
+    <button class="abtn" id="save-btn" onclick="saveEv()">${t('saveEv')}</button>
+  </div>
+  </div>
+  <div>
+    <div style="font-size:11px;font-weight:700;color:var(--fog);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;text-align:center">${t('livePreview')}</div>
+    <div id="lp-card" style="background:var(--card);border:1px solid var(--rim);border-radius:16px;overflow:hidden">
+      <div id="lp-thumb" style="height:160px;background:linear-gradient(135deg,#062d4a,#0a4a6e);display:flex;align-items:center;justify-content:center;font-size:56px;transition:.3s">◈</div>
+      <div style="padding:18px">
+        <div id="lp-title" style="font-size:16px;font-weight:600;color:var(--snow);margin-bottom:4px">${lang==='ar'?'عنوان الفعالية':'Event Title'}</div>
+        <div id="lp-sub" style="font-size:12px;color:var(--fog);margin-bottom:12px">${lang==='ar'?'العنوان الفرعي':'Subtitle'}</div>
+        <div style="background:var(--ink3);border:1px solid var(--rim);border-radius:8px;padding:12px">
+          <div id="lp-pkg" style="font-size:13px;font-weight:600;color:var(--snow);margin-bottom:3px">${lang==='ar'?'الباقة':'Package'}</div>
+          <div id="lp-items" style="font-size:11px;color:var(--fog)">—</div>
+        </div>
+        <div id="lp-price" style="font-family:var(--fd);font-size:24px;font-weight:700;color:var(--gold);margin-top:10px">—</div>
+      </div>
+    </div>
+  </div>
+  </div>`;
+}
+function lp(){
+  const g=(id,fb)=>{const e=document.getElementById(id);return e?e.value:fb;};
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  const si=(id,v)=>{const e=document.getElementById(id);if(e)e.innerHTML=v;};
+  s('lp-title',g('fe-title','')||(lang==='ar'?'عنوان الفعالية':'Event Title'));
+  s('lp-sub',g('fe-sub','')||(lang==='ar'?'العنوان الفرعي':'Subtitle'));
+  const emo=document.getElementById('lp-thumb');if(emo)emo.textContent=g('fe-emo','')||'◈';
+  s('lp-pkg',g('fe-pkgname','')||(lang==='ar'?'الباقة':'Package'));
+  s('lp-items',g('fe-items','')||'—');
+  const pv=parseFloat(g('fe-price',''));
+  s('lp-price',isNaN(pv)?'—':pv===0?t('freeLabel'):'$'+pv);
+}
+function saveEv(){
+  const title=document.getElementById('fe-title');
+  if(!title||!title.value.trim()){
+    if(title){title.classList.add('shake');setTimeout(()=>title.classList.remove('shake'),400);}
+    toast(lang==='ar'?'العنوان مطلوب':'Title is required');return;
+  }
+  const btn=document.getElementById('save-btn');
+  if(btn){btn.textContent=t('savingEv');btn.disabled=true;}
+  const ci=events.length%EV_COLORS.length;
+  const ev={
+    id:'ev_'+Date.now(),
+    title:title.value.trim(),
+    sub:document.getElementById('fe-sub').value,
+    emoji:document.getElementById('fe-emo').value||'◈',
+    cat:document.getElementById('fe-cat').value,
+    status:document.getElementById('fe-status').value||'draft',
+    desc:document.getElementById('fe-desc').value,
+    date:document.getElementById('fe-date').value,
+    time:document.getElementById('fe-time').value,
+    meet:document.getElementById('fe-meet').value,
+    pkgName:document.getElementById('fe-pkgname').value||'Standard',
+    price:(v=>isNaN(v)?-1:v)(parseFloat(document.getElementById('fe-price').value)),
+    items:document.getElementById('fe-items').value,
+    ci,createdAt:new Date().toISOString(),
+  };
+  setTimeout(()=>{events.push(ev);toast(t('savedEv'));dash('events');},450);
+}
+
+function dParticipants(){
+  if(!registrations.length){
+    return`<div class="dash-head"><div><div class="dash-title">${t('sblPt')}</div></div></div>
+    <div class="empty-st"><div class="empty-ico">◎</div><div class="empty-ttl">${t('noRegTitle')}</div><div class="empty-desc">${t('noRegDesc')}</div></div>`;
+  }
+  const rows=registrations.slice().reverse().map(r=>{
+    const ev=events.find(e=>e.id===r.eid)||{};
+    return`<tr><td style="font-weight:500">${r.name}</td><td style="color:var(--mist)">${r.phone}</td>
+      <td style="color:var(--mist)">${ev.title||'—'}</td>
+      <td><span class="bdg bdg-std">${r.pkg||'—'}</span></td>
+      <td style="color:var(--fog)">${r.date||'—'}</td>
+      <td style="color:var(--fog)">${r.time||'—'}</td></tr>`;
+  }).join('');
+  return`<div class="dash-head">
+    <div><div class="dash-title">${t('sblPt')}</div><div class="dash-sub">${registrations.length} ${lang==='ar'?'مشارك':'registrations'}</div></div>
+    <button class="abtn ghost" onclick="exportCSV()">⬇ ${t('exportCsv')}</button>
+  </div>
+  <div class="tbl-card"><div style="overflow-x:auto"><table>
+    <thead><tr>${['colName','colPhone','colEvent','colPkg','colDate','colTime'].map(k=>`<th>${t(k)}</th>`).join('')}</tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div></div>`;
+}
+function exportCSV(){
+  const rows=[['Name','Phone','Event','Package','Date','Time'],...registrations.map(r=>{const ev=events.find(e=>e.id===r.eid)||{};return[r.name,r.phone,ev.title||'',r.pkg||'',r.date||'',r.time||''];})];
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const b=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='safar-participants.csv';a.click();
+}
+
+function dAnalytics(){
+  if(!registrations.length){
+    return`<div class="dash-head"><div><div class="dash-title">${t('anTitle')}</div></div></div>
+    <div class="empty-st"><div class="empty-ico">◬</div><div class="empty-ttl">${t('anTitle')}</div><div class="empty-desc">${t('anEmpty')}</div></div>`;
+  }
+  const em={};registrations.forEach(r=>{em[r.eid]=(em[r.eid]||0)+1;});
+  const sorted=Object.entries(em).sort((a,b)=>b[1]-a[1]);
+  const bars=sorted.map(([id,cnt])=>{
+    const ev=events.find(e=>e.id===id)||{};
+    const max=sorted[0][1];
+    return`<div class="bar-col" title="${ev.title||id}: ${cnt}">
+      <div style="height:${Math.round(cnt/max*80)}px;border-radius:4px 4px 0 0;width:100%;background:linear-gradient(to top,var(--gold2),var(--gold))"></div>
+      <div style="font-size:10px;color:var(--fog)">${ev.emoji||'◈'}</div>
+    </div>`;
+  }).join('');
+  const pub=events.filter(e=>e.status==='published').length;
+  const top=sorted.length?(events.find(e=>e.id===sorted[0][0])||{}).title||'—':'—';
+  return`<div class="dash-head"><div><div class="dash-title">${t('anTitle')}</div></div></div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-lbl">${t('statReg')}</div><div class="stat-val">${registrations.length}</div></div>
+    <div class="stat-card"><div class="stat-lbl">${lang==='ar'?'فعاليات نشطة':'Active Events'}</div><div class="stat-val" style="color:var(--sage)">${pub}</div></div>
+    <div class="stat-card"><div class="stat-lbl">${lang==='ar'?'الأكثر حجزاً':'Most Booked'}</div><div class="stat-val" style="font-size:14px;padding-top:8px">${top}</div></div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--rim);border-radius:var(--rl);padding:20px">
+    <div style="font-size:14px;font-weight:600;color:var(--snow);margin-bottom:3px">${lang==='ar'?'التسجيلات حسب الفعالية':'Registrations by Event'}</div>
+    <div style="font-size:11px;color:var(--fog);margin-bottom:20px">${lang==='ar'?'عدد المسجلين لكل فعالية':'Participant count per event'}</div>
+    <div style="display:flex;align-items:flex-end;gap:6px;height:90px">${bars}</div>
+  </div>`;
+}
+
+function dPolls(){
+  const total=Object.values(pollVotes).reduce((a,b)=>a+b,0);
+  return`<div class="dash-head"><div><div class="dash-title">${t('pollsTitle')}</div><div class="dash-sub">${total} ${lang==='ar'?'صوت':'votes'}</div></div></div>
+  <div class="fpanel">
+    <div class="fpanel-title">${lang==='ar'?'استطلاع الرحلة القادمة':'Next Trip Poll'}</div>
+    <div class="poll-q" style="margin-bottom:20px">${t('pollQ')}</div>
+    ${POLL.map((p,i)=>{
+      const pct=total>0?Math.round(pollVotes[i]/total*100):0;
+      return`<div class="poll-opt voted" style="margin-bottom:8px">
+        <div class="poll-bar" style="width:${pct}%"></div>
+        <span class="poll-ico">${p.e}</span>
+        <span class="poll-lbl">${lang==='ar'?p.ar:p.en}</span>
+        <span class="poll-pct">${pollVotes[i]} ${lang==='ar'?'صوت':'votes'} (${pct}%)</span>
+      </div>`;
+    }).join('')}
+    <div class="poll-foot">
+      <span class="poll-cnt">${total} ${lang==='ar'?'إجمالي الأصوات':'total votes'}</span>
+      <button class="btn-conv" onclick="toast(lang==='ar'?'سيتم التحويل قريباً':'Converting to event...')">${lang==='ar'?'تحويل إلى فعالية →':'Convert to Event →'}</button>
+    </div>
+  </div>`;
+}
+
+/* ══ PUBLIC EVENT ══ */
+function openEvent(id){
+  currentEvent=events.find(e=>e.id===id);
+  if(!currentEvent)return;
+  showPage('p-event');renderEventPage();setNavOn('events');
+}
+function renderEventPage(){
+  const e=currentEvent;
+  const el=document.getElementById('event-area');if(!el)return;
+  const cl=EV_COLORS[e.ci||0];
+  const pr=e.price>0?'$'+e.price:e.price===0?t('freeLabel'):'';
+  const isP=e.status==='published';
+  const times=[e.time||'08:00','10:00','12:00'];
+  const dates=e.date?[e.date]:[];
+  const sLbl={published:t('sPublished'),voting:t('sVoting'),draft:t('sDraft'),closed:t('sClosed')}[e.status]||e.status;
+  el.innerHTML=`<div class="pub-hero" style="background:${cl.bg}">
+    <div class="pub-hero-bg">${e.emoji||'◈'}</div>
+    <div class="pub-hero-ov"></div>
+    <div class="pub-hero-cnt">
+      <button class="pub-back" onclick="goEvents()">${t('backBtn')}</button>
+      <div class="pub-tags">
+        <span class="ev-cat" style="position:static">${e.cat||''}</span>
+        <span class="ev-stat s${e.status.charAt(0)}" style="position:static">${sLbl}</span>
+      </div>
+      <div class="pub-title">${e.title}</div>
+      <div class="pub-sub">${e.sub||''} ${e.date?'· '+e.date:''}</div>
+    </div>
+  </div>
+  <div class="pub-body">
+    <div>
+      ${e.desc?`<div class="pub-sec"><div class="pub-sec-t">${lang==='ar'?'عن الفعالية':'About'}</div>
+        <div style="font-size:14px;color:var(--mist);line-height:1.85">${e.desc}</div></div>`:''}
+      <div class="pub-sec"><div class="pub-sec-t">${t('pubCD')}</div><div class="cd-row" id="cd-row"></div></div>
+      ${dates.length?`<div class="pub-sec"><div class="pub-sec-t">${lang==='ar'?'التاريخ':'Date'}</div>
+        <div class="chip-row">${dates.map((d,i)=>`<span class="dc${i===0?' on':''}" onclick="selChip(this,'.dc')">${d}</span>`).join('')}</div></div>`:''}
+      <div class="pub-sec"><div class="pub-sec-t">${lang==='ar'?'أوقات الانطلاق':'Departure Times'}</div>
+        <div class="chip-row">${times.map((tm,i)=>`<span class="tc${i===0?' on':''}" onclick="selChip(this,'.tc')">${tm}</span>`).join('')}</div></div>
+      ${e.items?`<div class="pub-sec"><div class="pub-sec-t">${t('pubIncl')}</div>
+        <ul class="inc-list">${e.items.split(',').map(i=>`<li class="inc-item"><div class="inc-chk">✓</div>${i.trim()}</li>`).join('')}</ul></div>`:''}
+      ${e.meet?`<div class="pub-sec"><div class="pub-sec-t">${t('pubMeet')}</div>
+        <div style="background:var(--ink3);border:1px solid var(--rim);border-radius:8px;padding:14px;font-size:13px;color:var(--mist)">📍 ${e.meet}</div></div>`:''}
+    </div>
+    <div>
+      <div class="book-card">
+        ${pr?`<div class="book-price">${pr}</div><div class="book-per">${t('perPerson')}</div>`:''}
+        ${e.pkgName?`<div class="pkg-opt on">
+          <div class="pkg-name">${e.pkgName}</div>
+          ${e.items?`<div class="pkg-items">${e.items}</div>`:''}
+          ${pr?`<div class="pkg-pr">${pr}</div>`:''}
+        </div>`:''}
+        ${isP
+          ?`<button class="yes-btn" onclick="startReg('${e.id}')">${t('pubBookBtn')}</button>
+            <div class="no-wrap"><button class="no-btn" id="no-btn" onmouseover="jiggleNo()">${t('pubNoBtn')}</button></div>`
+          :`<div class="unpub-note">${t('notPub')}</div>`
+        }
+      </div>
+    </div>
+  </div>`;
+  startCd(e.date);
+}
+function selChip(el,sel){document.querySelectorAll(sel).forEach(c=>c.classList.remove('on'));el.classList.add('on');}
+function jiggleNo(){
+  const b=document.getElementById('no-btn');if(!b)return;
+  const dx=(Math.random()-.5)*100,dy=(Math.random()-.5)*24;
+  b.style.transform=`translate(${dx}px,${dy}px)`;
+  setTimeout(()=>{if(b)b.style.transform='translate(0,0)';},700);
+}
+function startCd(dateStr){
+  if(cdTimer)clearInterval(cdTimer);
+  const target=dateStr?new Date(dateStr):new Date(Date.now()+14*864e5);
+  const upd=()=>{
+    const el=document.getElementById('cd-row');if(!el){clearInterval(cdTimer);return;}
+    const diff=target-new Date();
+    if(diff<0){el.innerHTML=`<div style="color:var(--sage);font-size:13px">${lang==='ar'?'انطلقت الفعالية!':'Event started!'}</div>`;return;}
+    const d=Math.floor(diff/864e5),h=Math.floor(diff%864e5/36e5),m=Math.floor(diff%36e5/6e4),s=Math.floor(diff%6e4/1e3);
+    el.innerHTML=[{n:d,l:t('cdDays')},{n:h,l:t('cdHrs')},{n:m,l:t('cdMins')},{n:s,l:t('cdSecs')}]
+      .map(u=>`<div class="cd-unit"><div class="cd-n">${String(u.n).padStart(2,'0')}</div><div class="cd-l">${u.l}</div></div>`).join('');
+  };
+  upd();cdTimer=setInterval(upd,1000);
+}
+
+/* ══ REGISTRATION ══ */
+function startReg(id){
+  currentEvent=events.find(e=>e.id===id);if(!currentEvent)return;
+  regStep=0;regData={eid:id,pkg:currentEvent.pkgName,date:currentEvent.date,time:currentEvent.time};
+  showPage('p-register');renderReg();
+}
+function renderReg(){
+  const el=document.getElementById('reg-area');if(!el)return;
+  const steps=t('regS');
+  const stepper=steps.map((s,i)=>`<div class="rs">
+    <div class="rs-c ${i<regStep?'rs-done':i===regStep?'rs-act':'rs-todo'}">${i<regStep?'✓':i+1}</div>
+    <div class="rs-lbl">${s}</div>
+  </div>`).join('');
+  let body='';
+  if(regStep===0)body=reg0();
+  else if(regStep===1)body=reg1();
+  else if(regStep===2)body=reg2();
+  else if(regStep===3)body=reg3();
+  else body=reg4();
+  el.innerHTML=`<div class="reg-wrap"><div class="reg-step">${stepper}</div>${body}</div>`;
+}
+function reg0(){
+  const e=currentEvent;
+  const pr=e.price>0?'$'+e.price:e.price===0?t('freeLabel'):'';
+  return`<div class="reg-card">
+    <div class="reg-title">${t('regPkg')}</div>
+    <div class="reg-sub">${t('regSubPkg')}</div>
+    <div class="pkg-opt on">
+      <div class="pkg-name">${e.pkgName||'Standard'}</div>
+      ${e.items?`<div class="pkg-items">${e.items}</div>`:''}
+      ${pr?`<div class="pkg-pr">${pr}</div>`:''}
+    </div>
+    <div class="reg-nav"><span></span><button class="abtn" onclick="regStep=1;renderReg()">${t('regNext')}</button></div>
+  </div>`;
+}
+function reg1(){
+  const d=currentEvent.date;const dates=d?[d]:[];
+  return`<div class="reg-card">
+    <div class="reg-title">${t('regDate')}</div>
+    <div class="reg-sub">${t('regSubDate')}</div>
+    <div class="chip-row" style="margin-bottom:20px" id="d-chips">
+      ${dates.map((d,i)=>`<span class="dc${i===0?' on':''}" onclick="selRD(this,'${d}')">${d}</span>`).join('')}
+      ${!dates.length?`<span style="font-size:13px;color:var(--fog)">${lang==='ar'?'لم يحدد تاريخ بعد':'No date set yet'}</span>`:''}
+    </div>
+    <div class="reg-nav">
+      <button class="abtn ghost" onclick="regStep=0;renderReg()">${t('regBack')}</button>
+      <button class="abtn" onclick="regStep=2;renderReg()">${t('regNext')}</button>
+    </div>
+  </div>`;
+}
+function selRD(el,d){document.querySelectorAll('#d-chips .dc').forEach(c=>c.classList.remove('on'));el.classList.add('on');regData.date=d;}
+function reg2(){
+  const bt=currentEvent.time||'08:00';const times=[bt,'10:00','12:00'];
+  return`<div class="reg-card">
+    <div class="reg-title">${t('regTime')}</div>
+    <div class="reg-sub">${t('regSubTime')}</div>
+    <div class="chip-row" style="margin-bottom:20px" id="t-chips">
+      ${times.map((tm,i)=>`<span class="tc${i===0?' on':''}" onclick="selRT(this,'${tm}')">${tm}</span>`).join('')}
+    </div>
+    <div class="reg-nav">
+      <button class="abtn ghost" onclick="regStep=1;renderReg()">${t('regBack')}</button>
+      <button class="abtn" onclick="regStep=3;renderReg()">${t('regNext')}</button>
+    </div>
+  </div>`;
+}
+function selRT(el,tm){document.querySelectorAll('#t-chips .tc').forEach(c=>c.classList.remove('on'));el.classList.add('on');regData.time=tm;}
+function reg3(){
+  return`<div class="reg-card">
+    <div class="reg-title">${t('regDets')}</div>
+    <div class="reg-sub">${t('regSubDets')}</div>
+    <div class="frow" style="margin-bottom:13px"><label class="flabel">${t('regName')} *</label>
+      <input class="finput" id="rg-name" placeholder="${t('regNamePh')}">
+    </div>
+    <div class="frow" style="margin-bottom:13px"><label class="flabel">${t('regPhone')} *</label>
+      <input class="finput" id="rg-phone" type="tel" placeholder="${t('regPhonePh')}">
+    </div>
+    <div class="frow"><label class="flabel">${t('regNotes')}</label>
+      <textarea class="ftextarea" id="rg-notes" placeholder="${t('regNotesPh')}"></textarea>
+    </div>
+    <div class="reg-nav">
+      <button class="abtn ghost" onclick="regStep=2;renderReg()">${t('regBack')}</button>
+      <button class="abtn" onclick="submitReg()">${t('regConfirmBtn')}</button>
+    </div>
+  </div>`;
+}
+function submitReg(){
+  const name=document.getElementById('rg-name').value.trim();
+  const phone=document.getElementById('rg-phone').value.trim();
+  if(!name||!phone){toast(t('regRequired'));return;}
+  regData.name=name;regData.phone=phone;
+  regData.notes=document.getElementById('rg-notes').value;
+  regData.pkg=currentEvent.pkgName||'Standard';
+  regData.ref='SAF-'+Math.floor(10000+Math.random()*90000);
+  regData.id='reg_'+Date.now();
+  registrations.push({...regData});
+  updateBadges();regStep=4;renderReg();
+}
+function reg4(){
+  const e=currentEvent;
+  const ci=e.ci||0;
+  const bgs=['linear-gradient(160deg,#06243c,#0a3d60)','linear-gradient(160deg,#2d1200,#4a2000)','linear-gradient(160deg,#041a0a,#072c12)','linear-gradient(160deg,#0c0824,#160f3e)','linear-gradient(160deg,#2a0808,#420f0f)','linear-gradient(160deg,#041e1e,#073232)'];
+  const pr=e.price>0?'$'+e.price:e.price===0?t('freeLabel'):'';
+  const fields=[[t('regName'),regData.name],[lang==='ar'?'التاريخ':'Date',regData.date||'—'],[lang==='ar'?'الوقت':'Time',regData.time||'—'],[lang==='ar'?'الباقة':'Package',regData.pkg],...(pr?[[lang==='ar'?'السعر':'Price',pr]]:[])];
+  return`<div class="reg-card" style="text-align:center">
+    <div style="font-size:52px;margin-bottom:14px">🎉</div>
+    <div class="reg-title">${t('regDone')}</div>
+    <div class="reg-sub" style="margin-bottom:24px">${t('regSubDone')}</div>
+    <div style="font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px">${t('invReady')}</div>
+    <div class="inv-wrap">
+      <div class="inv-card" style="background:${bgs[ci%bgs.length]}">
+        <div class="inv-head">
+          <div class="inv-emo">${e.emoji||'◈'}</div>
+          <div class="inv-ev-name">${e.title}</div>
+          <div class="inv-ev-sub">${e.sub||e.cat||''}</div>
+        </div>
+        <div class="inv-fields">
+          ${fields.map(([k,v])=>`<div class="inv-row"><span class="inv-k">${k}</span><span class="inv-v">${v}</span></div>`).join('')}
+        </div>
+        <div class="inv-qr-area">
+          <div class="qr-box">QR</div>
+          <div class="inv-ref">${regData.ref}</div>
+        </div>
+      </div>
+    </div>
+    <div class="inv-share">
+      <button class="share-btn" onclick="toast(lang==='ar'?'تم التنزيل PNG':'Downloaded PNG')">⬇ PNG</button>
+      <button class="share-btn" onclick="toast(lang==='ar'?'تم التنزيل PDF':'Downloaded PDF')">📄 PDF</button>
+      <button class="share-btn" onclick="toast(lang==='ar'?'تمت المشاركة':'Shared!')">💬 WhatsApp</button>
+    </div>
+    <button class="abtn ghost" style="width:100%;margin-top:16px" onclick="goEvents()">${t('regBackHome')}</button>
+  </div>`;
+}
+
+/* ══ INIT ══ */
+renderNavAuth();
+renderFeatures();
+renderThemes();
+renderTestimonials();
+renderPubGrid();
+renderPoll();
+</script>
+</body>
+</html>
