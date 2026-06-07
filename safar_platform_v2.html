@@ -1,0 +1,851 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--surface:#22222e;--surface2:#2a2a38;
+--border:#2e2e3e;--border2:#3a3a52;
+--text:#f0f0f8;--text2:#a0a0c0;--text3:#505070;
+--accent:#7c6ff7;--accent2:#5b5de7;
+--green:#4ade80;--gold:#f0b429;--coral:#f87171;--teal:#2dd4bf;
+--r:12px;--rlg:20px;
+--fen:'DM Sans',sans-serif;--far:'Noto Kufi Arabic',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fen);font-size:14px;line-height:1.5;min-height:100vh;overflow-x:hidden}
+body[dir=rtl]{font-family:var(--far)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+input,select,textarea{font-family:inherit;font-size:14px}
+button{font-family:inherit;cursor:pointer}
+
+/* nav */
+#nav{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;background:rgba(10,10,15,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.nav-brand{display:flex;align-items:center;gap:8px;cursor:pointer}
+.nav-logo{width:30px;height:30px;background:#7c6ff7;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.nav-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text)}
+body[dir=rtl] .nav-title{font-family:var(--far);font-size:15px}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nbtn{background:none;border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:7px;font-size:12px;transition:.15s}
+.nbtn:hover{border-color:var(--accent);color:var(--accent)}
+.nbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.nbtn.primary:hover{background:var(--accent2);opacity:1}
+.lang-indicator{font-size:11px;color:var(--text3);padding:4px 8px;border:1px solid var(--border);border-radius:5px;cursor:pointer}
+.lang-indicator:hover{color:var(--text2)}
+
+/* pages */
+.page{display:none}.page.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page.active{animation:fi .25s ease}
+
+/* ── LOGIN ── */
+#login-wrap{min-height:calc(100vh - 56px);display:flex;align-items:center;justify-content:center;padding:24px}
+.login-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rlg);padding:36px 32px;width:100%;max-width:380px}
+.login-logo{width:48px;height:48px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 20px}
+.login-title{font-size:20px;font-weight:600;color:var(--text);text-align:center;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--text3);text-align:center;margin-bottom:28px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;font-weight:500}
+.finput{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);outline:none;transition:.15s;width:100%}
+.finput:focus{border-color:var(--accent)}
+.finput.err{border-color:var(--coral)}
+.err-msg{color:var(--coral);font-size:12px;margin-top:4px;display:none}
+.err-msg.show{display:block}
+.login-btn{width:100%;background:var(--accent);border:none;color:#fff;padding:11px;border-radius:8px;font-size:14px;font-weight:600;margin-top:8px;transition:.15s}
+.login-btn:hover{background:var(--accent2)}
+.login-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:16px}
+
+/* ── ADMIN LAYOUT ── */
+#admin-wrap{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 56px)}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:16px 0;display:flex;flex-direction:column}
+.sb-user{padding:12px 14px 16px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.sb-user-row{display:flex;align-items:center;gap:9px}
+.sb-avatar{width:32px;height:32px;background:rgba(124,111,247,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--accent);font-weight:600;flex-shrink:0}
+.sb-name{font-size:13px;font-weight:600;color:var(--text)}
+.sb-role{font-size:11px;color:var(--text3)}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 12px;margin:1px 8px;border-radius:8px;color:var(--text2);font-size:13px;border:none;background:none;width:calc(100% - 16px);transition:.15s;text-align:left}
+body[dir=rtl] .sb-item{text-align:right}
+.sb-item:hover{background:var(--surface);color:var(--text)}
+.sb-item.active{background:rgba(124,111,247,.15);color:var(--accent)}
+.sb-icon{font-size:16px;width:18px;flex-shrink:0;text-align:center}
+.sb-badge{margin-left:auto;background:var(--coral);color:#fff;font-size:10px;padding:1px 6px;border-radius:20px;line-height:16px}
+body[dir=rtl] .sb-badge{margin-left:0;margin-right:auto}
+.sb-logout{margin-top:auto;padding:8px 12px;margin:auto 8px 8px}
+
+.dash{padding:24px;overflow-y:auto}
+.dash-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.dash-title{font-size:20px;font-weight:600;color:var(--text)}
+.dash-sub{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* empty state */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center}
+.empty-icon{font-size:40px;margin-bottom:16px;opacity:.5}
+.empty-title{font-size:16px;font-weight:500;color:var(--text2);margin-bottom:8px}
+.empty-desc{font-size:13px;color:var(--text3);margin-bottom:20px}
+.abtn{background:var(--accent);border:none;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;transition:.15s}
+.abtn:hover{background:var(--accent2)}
+.abtn.ghost{background:var(--surface);border:1px solid var(--border);color:var(--text2)}
+.abtn.ghost:hover{color:var(--text);border-color:var(--border2)}
+.abtn.danger{background:rgba(248,113,113,.15);border:1px solid rgba(248,113,113,.3);color:var(--coral)}
+.abtn.danger:hover{background:rgba(248,113,113,.25)}
+.abtn.sm{padding:7px 14px;font-size:12px}
+
+/* event form */
+.form-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:16px}
+.form-section-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrid.full{grid-template-columns:1fr}
+.frow{display:flex;flex-direction:column;gap:5px}
+.flabel{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+.fselect{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--text);outline:none;width:100%}
+.ftextarea{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--text);outline:none;width:100%;resize:vertical;min-height:80px}
+.ftextarea:focus,.finput:focus,.fselect:focus{border-color:var(--accent)}
+
+/* event list */
+.event-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;transition:.15s}
+.event-row:hover{border-color:var(--border2)}
+.event-row-emoji{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.event-row-info{flex:1;min-width:0}
+.event-row-title{font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.event-row-meta{font-size:12px;color:var(--text3);margin-top:2px}
+.event-row-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.status-pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.sp-draft{background:rgba(80,80,112,.2);color:var(--text3);border:1px solid rgba(80,80,112,.3)}
+.sp-voting{background:rgba(240,180,41,.12);color:var(--gold);border:1px solid rgba(240,180,41,.25)}
+.sp-published{background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.25)}
+.sp-closed{background:rgba(248,113,113,.12);color:var(--coral);border:1px solid rgba(248,113,113,.25)}
+
+/* public event page */
+.pub-hero{min-height:320px;display:flex;align-items:flex-end;padding:28px;position:relative;overflow:hidden}
+.pub-hero-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:100px;filter:blur(1px);transform:scale(1.08)}
+.pub-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.2) 70%,transparent 100%)}
+.pub-hero-content{position:relative;z-index:1}
+.pub-ht{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;margin-bottom:6px}
+body[dir=rtl] .pub-ht{font-family:var(--far)}
+.pub-meta{font-size:13px;color:rgba(255,255,255,.65)}
+.pub-body{max-width:960px;margin:0 auto;padding:24px 20px 40px;display:grid;grid-template-columns:1fr 300px;gap:24px}
+.pub-section{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px}
+.pub-section-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+.booking-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:sticky;top:70px}
+.pkg-option{border:1px solid var(--border);border-radius:9px;padding:14px;margin-bottom:10px;cursor:pointer;transition:.15s}
+.pkg-option:hover{border-color:var(--border2)}
+.pkg-option.selected{border-color:var(--accent);background:rgba(124,111,247,.07)}
+.pkg-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.pkg-items{font-size:12px;color:var(--text3);margin-bottom:8px}
+.pkg-price{font-size:18px;font-weight:700;color:var(--accent)}
+.yes-btn{width:100%;background:var(--accent);border:none;color:#fff;padding:13px;border-radius:9px;font-size:15px;font-weight:600;transition:.15s;margin-top:16px}
+.yes-btn:hover{background:var(--accent2)}
+.no-wrap{text-align:center;margin-top:10px;min-height:24px}
+.no-btn-inner{font-size:12px;color:var(--text3);background:none;border:none;display:inline-block;position:relative;transition:all .2s ease;cursor:pointer}
+.no-btn-inner:hover{color:var(--text2)}
+.date-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:13px;margin:4px;cursor:pointer;transition:.15s}
+.date-chip.sel{background:rgba(124,111,247,.15);border-color:var(--accent);color:var(--accent)}
+.time-chip{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:6px 14px;font-size:13px;margin:4px;cursor:pointer;transition:.15s}
+.time-chip.sel{background:rgba(124,111,247,.15);border-color:var(--accent);color:var(--accent)}
+
+/* reg flow */
+.reg-wrap{max-width:520px;margin:0 auto;padding:32px 20px 48px}
+.reg-stepper{display:flex;align-items:center;margin-bottom:32px}
+.rst{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.rst::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:1px;background:var(--border)}
+.rst:last-child::after{display:none}
+.rst-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;z-index:1;transition:.2s}
+.rst-done{background:var(--green);color:#000}
+.rst-act{background:var(--accent);color:#fff}
+.rst-todo{background:var(--surface);color:var(--text3);border:1px solid var(--border)}
+.rst-label{font-size:10px;color:var(--text3);margin-top:5px;text-align:center}
+.reg-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rlg);padding:28px}
+.reg-title{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.reg-sub{font-size:13px;color:var(--text3);margin-bottom:22px}
+.reg-nav{display:flex;align-items:center;justify-content:space-between;margin-top:24px}
+
+/* confirm card */
+.inv-card{border-radius:16px;overflow:hidden;margin:20px auto;max-width:320px}
+.inv-head{padding:24px;text-align:center}
+.inv-body{padding:0 20px 16px}
+.inv-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.inv-row:last-child{border-bottom:none}
+.inv-k{font-size:11px;opacity:.55;text-transform:uppercase;letter-spacing:.06em}
+.inv-v{font-size:13px;font-weight:500}
+.inv-foot{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1);text-align:center}
+.qr-box{width:72px;height:72px;background:rgba(255,255,255,.1);border-radius:7px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:10px;opacity:.5}
+.inv-ref{font-size:11px;opacity:.4;letter-spacing:.08em}
+.share-row{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.share-btn{flex:1;padding:9px;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#fff;font-size:12px;transition:.15s}
+.share-btn:hover{background:rgba(255,255,255,.13)}
+
+/* stat mini */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.stat-mini{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.stat-mini-val{font-size:24px;font-weight:700;color:var(--text);font-family:'Playfair Display',serif}
+.stat-mini-lbl{font-size:11px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em}
+
+/* notification */
+#toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border2);padding:10px 20px;border-radius:8px;font-size:13px;color:var(--text);white-space:nowrap;opacity:0;transition:.3s;pointer-events:none;z-index:999}
+#toast.show{opacity:1}
+
+@media(max-width:680px){
+  #admin-wrap{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .pub-body{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+</style>
+
+<div id="toast"></div>
+
+<nav id="nav">
+  <div class="nav-brand" onclick="goPub()">
+    <div class="nav-logo">✦</div>
+    <span class="nav-title" id="nb">Safar</span>
+  </div>
+  <div class="nav-right">
+    <span class="lang-indicator" onclick="toggleLang()" id="lang-ind">ع</span>
+    <span id="nav-auth-area"></span>
+  </div>
+</nav>
+
+<!-- LOGIN -->
+<div class="page" id="p-login">
+  <div id="login-wrap">
+    <div class="login-box">
+      <div class="login-logo">✦</div>
+      <div class="login-title" id="lt">Admin Login</div>
+      <div class="login-sub" id="ls">Dashboard access is restricted</div>
+      <div class="field">
+        <label id="ll-email">Email</label>
+        <input class="finput" type="email" id="li-email" placeholder="admin@safar.io" value="admin@safar.io">
+      </div>
+      <div class="field">
+        <label id="ll-pw">Password</label>
+        <input class="finput" type="password" id="li-pw" placeholder="••••••••" value="">
+        <div class="err-msg" id="login-err">Incorrect password. Try: admin123</div>
+      </div>
+      <button class="login-btn" onclick="doLogin()" id="login-submit">Sign In</button>
+      <div class="login-hint" id="login-hint">Demo: admin@safar.io / admin123</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="p-admin">
+  <div id="admin-wrap">
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-user">
+        <div class="sb-user-row">
+          <div class="sb-avatar">M</div>
+          <div><div class="sb-name">Mohanad K.</div><div class="sb-role" id="sb-role-lbl">Platform Admin</div></div>
+        </div>
+      </div>
+      <button class="sb-item active" id="sb-overview" onclick="showDash('overview')">
+        <span class="sb-icon">⊞</span><span id="sb-lbl-overview">Overview</span>
+      </button>
+      <button class="sb-item" id="sb-events" onclick="showDash('events')">
+        <span class="sb-icon">◈</span><span id="sb-lbl-events">Events</span>
+      </button>
+      <button class="sb-item" id="sb-new" onclick="showDash('new-event')">
+        <span class="sb-icon">⊕</span><span id="sb-lbl-new">New Event</span>
+      </button>
+      <button class="sb-item" id="sb-participants" onclick="showDash('participants')">
+        <span class="sb-icon">◉</span><span id="sb-lbl-participants">Participants</span>
+      </button>
+      <button class="sb-logout abtn ghost sm" onclick="doLogout()">
+        <span id="sb-logout-lbl">Sign out</span>
+      </button>
+    </aside>
+    <div class="dash" id="dash-area"></div>
+  </div>
+</div>
+
+<!-- PUBLIC LANDING -->
+<div class="page" id="p-public">
+  <div id="pub-area"></div>
+</div>
+
+<!-- PUBLIC EVENT PAGE -->
+<div class="page" id="p-event">
+  <div id="event-area"></div>
+</div>
+
+<!-- REGISTER -->
+<div class="page" id="p-register">
+  <div id="reg-area"></div>
+</div>
+
+<script>
+const PASS = 'admin123';
+let isAdmin = false;
+let lang = 'en';
+let events = [];
+let registrations = [];
+let currentEvent = null;
+let regStep = 0;
+let regData = {};
+let activeDash = 'overview';
+
+const T = {
+  en:{
+    nb:'Safar',lt:'Admin Login',ls:'Dashboard access is restricted',
+    llEmail:'Email',llPw:'Password',loginBtn:'Sign In',loginHint:'Demo: admin@safar.io / admin123',loginErr:'Incorrect password. Try: admin123',
+    sbRole:'Platform Admin',sbOverview:'Overview',sbEvents:'Events',sbNew:'New Event',sbParticipants:'Participants',sbLogout:'Sign out',
+    dashOverview:'Overview',dashSub:'Welcome back, Mohanad',
+    noEvents:'No events yet',noEventsDesc:'Create your first event to get started.',createFirst:'Create Event',
+    totalEvents:'Total Events',published:'Published',totalReg:'Registrations',
+    eventsList:'All Events',createNew:'+ New Event',
+    editBtn:'Edit',deleteBtn:'Delete',viewBtn:'View',publishBtn:'Publish',
+    newEventTitle:'Create New Event',basicInfo:'Basic Information',
+    evTitle:'Event Title',evTitlePh:'e.g. Beach Trip to Antalya',
+    evSub:'Subtitle',evSubPh:'Short description',
+    evCat:'Category',evStatus:'Status',evEmoji:'Emoji',evEmojiPh:'e.g. 🏖️',
+    evDesc:'Description',evDescPh:'Tell participants what to expect...',
+    evDate:'Available Date',evTime:'Departure Time',evCapacity:'Capacity',
+    evPrice:'Price ($)',evPriceFree:'Free',
+    pkgName:'Package Name',pkgItems:'What\'s included',pkgPrice:'Package Price ($)',
+    saveEvent:'Save Event',saving:'Saving...',saved:'Event saved!',
+    statusDraft:'Draft',statusVoting:'Voting',statusPublished:'Published',statusClosed:'Closed',
+    noParticipants:'No registrations yet',noParticipantsDesc:'Participants will appear once people register.',
+    partName:'Name',partPhone:'Phone',partEvent:'Event',partPkg:'Package',partDate:'Date',partTime:'Time',
+    viewEvent:'View Event',
+    // public
+    pubBack:'← All Events',pubBookNow:'Yes, I\'m Coming! 🎉',pubNoBtn:'Maybe not...',
+    pubDate:'Date',pubTime:'Time',pubIncluded:'What\'s included',pubMeeting:'Meeting Point',
+    pubRegister:'Register Now',
+    // reg
+    regS1:'Package',regS2:'Date',regS3:'Time',regS4:'Details',regS5:'Done',
+    regSelectPkg:'Choose a package',regSelectDate:'Choose a date',regSelectTime:'Choose a time',
+    regDetails:'Your details',regConfirm:'Booking confirmed!',
+    regName:'Full Name',regPhone:'Phone Number',regNotes:'Notes (optional)',
+    regBack:'← Back',regNext:'Next →',regBook:'Confirm Booking',
+    regNamePh:'Ahmed Al-Rashid',regPhonePh:'+90 555 000 0000',regNotesPh:'Any special requests...',
+    refPrefix:'SAF',
+  },
+  ar:{
+    nb:'سفر',lt:'تسجيل دخول المدير',ls:'الوصول للوحة التحكم محمي',
+    llEmail:'البريد الإلكتروني',llPw:'كلمة المرور',loginBtn:'دخول',loginHint:'تجريبي: admin@safar.io / admin123',loginErr:'كلمة مرور خاطئة. جرّب: admin123',
+    sbRole:'مدير المنصة',sbOverview:'نظرة عامة',sbEvents:'الفعاليات',sbNew:'فعالية جديدة',sbParticipants:'المشاركون',sbLogout:'تسجيل الخروج',
+    dashOverview:'نظرة عامة',dashSub:'أهلاً مهند',
+    noEvents:'لا توجد فعاليات بعد',noEventsDesc:'أنشئ فعاليتك الأولى للبدء.',createFirst:'إنشاء فعالية',
+    totalEvents:'إجمالي الفعاليات',published:'منشورة',totalReg:'التسجيلات',
+    eventsList:'جميع الفعاليات',createNew:'+ فعالية جديدة',
+    editBtn:'تعديل',deleteBtn:'حذف',viewBtn:'عرض',publishBtn:'نشر',
+    newEventTitle:'إنشاء فعالية جديدة',basicInfo:'المعلومات الأساسية',
+    evTitle:'عنوان الفعالية',evTitlePh:'مثال: رحلة شاطئ أنطاليا',
+    evSub:'العنوان الفرعي',evSubPh:'وصف مختصر',
+    evCat:'الفئة',evStatus:'الحالة',evEmoji:'رمز',evEmojiPh:'مثال: 🏖️',
+    evDesc:'التفاصيل',evDescPh:'أخبر المشاركين بما سيحدث...',
+    evDate:'تاريخ متاح',evTime:'وقت الانطلاق',evCapacity:'الطاقة الاستيعابية',
+    evPrice:'السعر ($)',evPriceFree:'مجاناً',
+    pkgName:'اسم الباقة',pkgItems:'ما يشمله',pkgPrice:'سعر الباقة ($)',
+    saveEvent:'حفظ الفعالية',saving:'جاري الحفظ...',saved:'تم حفظ الفعالية!',
+    statusDraft:'مسودة',statusVoting:'تصويت',statusPublished:'منشورة',statusClosed:'مغلقة',
+    noParticipants:'لا توجد تسجيلات بعد',noParticipantsDesc:'ستظهر التسجيلات هنا بعد تسجيل المشاركين.',
+    partName:'الاسم',partPhone:'الهاتف',partEvent:'الفعالية',partPkg:'الباقة',partDate:'التاريخ',partTime:'الوقت',
+    viewEvent:'عرض الفعالية',
+    pubBack:'← جميع الفعاليات',pubBookNow:'نعم، سأحضر! 🎉',pubNoBtn:'ربما لا...',
+    pubDate:'التاريخ',pubTime:'الوقت',pubIncluded:'ما يشمله',pubMeeting:'نقطة التجمع',
+    pubRegister:'تسجيل الآن',
+    regS1:'الباقة',regS2:'التاريخ',regS3:'الوقت',regS4:'البيانات',regS5:'تأكيد',
+    regSelectPkg:'اختر الباقة',regSelectDate:'اختر التاريخ',regSelectTime:'اختر الوقت',
+    regDetails:'بياناتك',regConfirm:'تم تأكيد الحجز!',
+    regName:'الاسم الكامل',regPhone:'رقم الهاتف',regNotes:'ملاحظات (اختياري)',
+    regBack:'→ رجوع',regNext:'التالي ←',regBook:'تأكيد الحجز',
+    regNamePh:'أحمد الراشد',regPhonePh:'+966 5X XXX XXXX',regNotesPh:'أي طلبات خاصة...',
+    refPrefix:'سفر',
+  }
+};
+function t(k){return (T[lang][k]||T.en[k]||k)}
+
+function toggleLang(){
+  lang = lang==='en'?'ar':'en';
+  document.body.setAttribute('dir',lang==='ar'?'rtl':'ltr');
+  document.getElementById('lang-ind').textContent = lang==='ar'?'EN':'ع';
+  refreshTexts();
+  const ap = document.querySelector('.page.active').id;
+  if(ap==='p-admin') showDash(activeDash);
+  if(ap==='p-public') renderPublic();
+  if(ap==='p-login') renderLoginTexts();
+}
+
+function refreshTexts(){
+  document.getElementById('nb').textContent=t('nb');
+  renderNavAuth();
+}
+
+function renderLoginTexts(){
+  document.getElementById('lt').textContent=t('lt');
+  document.getElementById('ls').textContent=t('ls');
+  document.getElementById('ll-email').textContent=t('llEmail');
+  document.getElementById('ll-pw').textContent=t('llPw');
+  document.getElementById('login-submit').textContent=t('loginBtn');
+  document.getElementById('login-hint').textContent=t('loginHint');
+  document.getElementById('login-err').textContent=t('loginErr');
+}
+
+function renderNavAuth(){
+  const a = document.getElementById('nav-auth-area');
+  if(isAdmin){
+    a.innerHTML=`<button class="nbtn primary" onclick="showPage('p-admin');showDash('overview')">${lang==='ar'?'لوحة التحكم':'Dashboard'}</button>`;
+  } else {
+    a.innerHTML=`<button class="nbtn" onclick="showPage('p-login')">${lang==='ar'?'دخول المدير':'Admin Login'}</button>`;
+  }
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+// ── LOGIN ──
+function doLogin(){
+  const pw = document.getElementById('li-pw').value;
+  const btn = document.getElementById('login-submit');
+  const err = document.getElementById('login-err');
+  if(pw===PASS){
+    isAdmin=true;
+    err.classList.remove('show');
+    btn.textContent='✓';
+    setTimeout(()=>{showPage('p-admin');showDash('overview');renderNavAuth();},300);
+  } else {
+    err.classList.add('show');
+    document.getElementById('li-pw').classList.add('err');
+    setTimeout(()=>document.getElementById('li-pw').classList.remove('err'),1000);
+  }
+}
+document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+function doLogout(){
+  isAdmin=false;
+  renderNavAuth();
+  showPage('p-public');
+  renderPublic();
+}
+
+// ── SIDEBAR ──
+function showDash(section){
+  activeDash=section;
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById('sb-'+section.replace('new-event','new'));
+  if(el) el.classList.add('active');
+  renderSidebar();
+  const da=document.getElementById('dash-area');
+  if(section==='overview') da.innerHTML=renderOverview();
+  else if(section==='events') da.innerHTML=renderEventsAdmin();
+  else if(section==='new-event') da.innerHTML=renderNewEvent();
+  else if(section==='participants') da.innerHTML=renderParticipants();
+}
+
+function renderSidebar(){
+  document.getElementById('sb-role-lbl').textContent=t('sbRole');
+  document.getElementById('sb-lbl-overview').textContent=t('sbOverview');
+  document.getElementById('sb-lbl-events').textContent=t('sbEvents');
+  document.getElementById('sb-lbl-new').textContent=t('sbNew');
+  document.getElementById('sb-lbl-participants').textContent=t('sbParticipants');
+  document.getElementById('sb-logout-lbl').textContent=t('sbLogout');
+}
+
+// ── OVERVIEW ──
+function renderOverview(){
+  const pub = events.filter(e=>e.status==='published').length;
+  const total = events.length;
+  const regs = registrations.length;
+  if(total===0){
+    return `<div class="dash-head"><div><div class="dash-title">${t('dashOverview')}</div><div class="dash-sub">${t('dashSub')}</div></div></div>
+    <div class="empty"><div class="empty-icon">◈</div><div class="empty-title">${t('noEvents')}</div><div class="empty-desc">${t('noEventsDesc')}</div><button class="abtn" onclick="showDash('new-event')">${t('createFirst')}</button></div>`;
+  }
+  let recentHTML='';
+  if(registrations.length){
+    recentHTML=`<div class="form-card"><div class="form-section-title">${lang==='ar'?'آخر التسجيلات':'Recent Registrations'}</div>
+    <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">
+    <thead><tr>${['partName','partEvent','partDate','partTime'].map(k=>`<th style="text-align:left;padding:7px 10px;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)">${t(k)}</th>`).join('')}</tr></thead>
+    <tbody>${registrations.slice(-5).reverse().map(r=>`<tr>
+      <td style="padding:9px 10px;font-size:13px;color:var(--text)">${r.name}</td>
+      <td style="padding:9px 10px;font-size:12px;color:var(--text2)">${(events.find(e=>e.id===r.eventId)||{}).title||'—'}</td>
+      <td style="padding:9px 10px;font-size:12px;color:var(--text2)">${r.date||'—'}</td>
+      <td style="padding:9px 10px;font-size:12px;color:var(--text2)">${r.time||'—'}</td>
+    </tr>`).join('')}
+    </tbody></table></div></div>`;
+  }
+  return `<div class="dash-head"><div><div class="dash-title">${t('dashOverview')}</div><div class="dash-sub">${t('dashSub')}</div></div>
+  <button class="abtn" onclick="showDash('new-event')">${t('createNew')}</button></div>
+  <div class="stats-row">
+    <div class="stat-mini"><div class="stat-mini-val">${total}</div><div class="stat-mini-lbl">${t('totalEvents')}</div></div>
+    <div class="stat-mini"><div class="stat-mini-val" style="color:var(--green)">${pub}</div><div class="stat-mini-lbl">${t('published')}</div></div>
+    <div class="stat-mini"><div class="stat-mini-val" style="color:var(--accent)">${regs}</div><div class="stat-mini-lbl">${t('totalReg')}</div></div>
+  </div>
+  ${recentHTML}`;
+}
+
+// ── EVENTS LIST (ADMIN) ──
+function renderEventsAdmin(){
+  if(!events.length){
+    return `<div class="dash-head"><div><div class="dash-title">${t('eventsList')}</div></div><button class="abtn" onclick="showDash('new-event')">${t('createNew')}</button></div>
+    <div class="empty"><div class="empty-icon">◈</div><div class="empty-title">${t('noEvents')}</div><div class="empty-desc">${t('noEventsDesc')}</div><button class="abtn" onclick="showDash('new-event')">${t('createFirst')}</button></div>`;
+  }
+  const rows=events.map(e=>{
+    const spClass='sp-'+e.status;
+    const spLabel=t('status'+e.status.charAt(0).toUpperCase()+e.status.slice(1))||e.status;
+    const regs=registrations.filter(r=>r.eventId===e.id).length;
+    const pubBtn=e.status==='draft'?`<button class="abtn sm" onclick="publishEvent('${e.id}')">${t('publishBtn')}</button>`:'';
+    return `<div class="event-row">
+      <div class="event-row-emoji" style="background:${e.color||'rgba(124,111,247,.15)'};">${e.emoji||'◈'}</div>
+      <div class="event-row-info">
+        <div class="event-row-title">${e.title}</div>
+        <div class="event-row-meta">${e.date||''} ${e.date&&e.time?'·':''} ${e.time||''} ${regs?'· '+regs+(lang==='ar'?' مشارك':' registrations'):''}${e.price>0?' · $'+e.price:e.price===0?' · '+t('evPriceFree'):''}</div>
+      </div>
+      <div class="event-row-actions">
+        <span class="status-pill ${spClass}">${spLabel}</span>
+        ${pubBtn}
+        <button class="abtn ghost sm" onclick="viewPublicEvent('${e.id}')">${t('viewBtn')}</button>
+        <button class="abtn ghost sm" onclick="deleteEvent('${e.id}')">${t('deleteBtn')}</button>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="dash-head"><div><div class="dash-title">${t('eventsList')}</div><div class="dash-sub">${events.length} ${lang==='ar'?'فعالية':'events'}</div></div><button class="abtn" onclick="showDash('new-event')">${t('createNew')}</button></div>${rows}`;
+}
+
+function publishEvent(id){
+  const ev=events.find(e=>e.id===id);
+  if(ev){ev.status='published';showToast(lang==='ar'?'تم نشر الفعالية ✓':'Event published ✓');showDash('events');}
+}
+function deleteEvent(id){
+  if(!confirm(lang==='ar'?'هل أنت متأكد من الحذف؟':'Delete this event?'))return;
+  events=events.filter(e=>e.id!==id);
+  showToast(lang==='ar'?'تم الحذف':'Deleted');
+  showDash('events');
+}
+
+// ── NEW EVENT FORM ──
+function renderNewEvent(){
+  const cats=lang==='ar'?['شاطئ','مغامرة','صحراء','رفاهية','جبال','مدينة','ورشة']:['Beach','Adventure','Desert','Luxury','Mountains','City','Workshop'];
+  const statuses=lang==='ar'?['مسودة','تصويت','منشورة','مغلقة']:['draft','voting','published','closed'];
+  const sLabels=lang==='ar'?['مسودة','تصويت','منشورة','مغلقة']:['Draft','Voting','Published','Closed'];
+  return `<div class="dash-head"><div><div class="dash-title">${t('newEventTitle')}</div></div></div>
+  <div class="form-card">
+    <div class="form-section-title">${t('basicInfo')}</div>
+    <div class="fgrid full" style="margin-bottom:12px">
+      <div class="frow"><label class="flabel">${t('evTitle')} *</label><input class="finput" id="fe-title" placeholder="${t('evTitlePh')}"></div>
+    </div>
+    <div class="fgrid" style="margin-bottom:12px">
+      <div class="frow"><label class="flabel">${t('evSub')}</label><input class="finput" id="fe-sub" placeholder="${t('evSubPh')}"></div>
+      <div class="frow"><label class="flabel">${t('evEmoji')}</label><input class="finput" id="fe-emoji" placeholder="${t('evEmojiPh')}"></div>
+    </div>
+    <div class="fgrid" style="margin-bottom:12px">
+      <div class="frow"><label class="flabel">${t('evCat')}</label><select class="fselect" id="fe-cat">${cats.map((c,i)=>`<option value="${lang==='ar'?cats[i]:c}">${c}</option>`).join('')}</select></div>
+      <div class="frow"><label class="flabel">${t('evStatus')}</label><select class="fselect" id="fe-status">${statuses.map((s,i)=>`<option value="${s}">${sLabels[i]}</option>`).join('')}</select></div>
+    </div>
+    <div class="frow" style="margin-bottom:12px"><label class="flabel">${t('evDesc')}</label><textarea class="ftextarea" id="fe-desc" placeholder="${t('evDescPh')}"></textarea></div>
+    <div class="fgrid">
+      <div class="frow"><label class="flabel">${t('evDate')}</label><input class="finput" id="fe-date" type="date"></div>
+      <div class="frow"><label class="flabel">${t('evTime')}</label><input class="finput" id="fe-time" type="time" value="08:00"></div>
+    </div>
+  </div>
+  <div class="form-card">
+    <div class="form-section-title">${t('pricing')}</div>
+    <div class="fgrid">
+      <div class="frow"><label class="flabel">${t('pkgName')}</label><input class="finput" id="fe-pkgname" placeholder="${lang==='ar'?'الباقة المعيارية':'Standard Package'}"></div>
+      <div class="frow"><label class="flabel">${t('evPrice')}</label><input class="finput" id="fe-price" type="number" min="0" placeholder="0 = ${t('evPriceFree')}"></div>
+    </div>
+    <div class="frow" style="margin-top:12px"><label class="flabel">${t('pkgItems')}</label><input class="finput" id="fe-items" placeholder="${lang==='ar'?'مواصلات، إفطار، مرشد':'Transportation, Breakfast, Guide'}"></div>
+  </div>
+  <div class="fgrid" style="margin-bottom:8px">
+    <div></div>
+    <div style="display:flex;gap:8px">
+      <button class="abtn ghost" onclick="showDash('events')">${lang==='ar'?'إلغاء':'Cancel'}</button>
+      <button class="abtn" id="save-ev-btn" onclick="saveEvent()">${t('saveEvent')}</button>
+    </div>
+  </div>`;
+}
+
+function saveEvent(){
+  const title=document.getElementById('fe-title').value.trim();
+  if(!title){document.getElementById('fe-title').classList.add('err');showToast(lang==='ar'?'العنوان مطلوب':'Title is required');return;}
+  document.getElementById('fe-title').classList.remove('err');
+  const btn=document.getElementById('save-ev-btn');
+  btn.textContent=t('saving');btn.disabled=true;
+  const colors=['rgba(14,165,233,.2)','rgba(124,111,247,.2)','rgba(240,180,41,.2)','rgba(74,222,128,.2)','rgba(248,113,113,.2)','rgba(45,212,191,.2)'];
+  const priceRaw=document.getElementById('fe-price').value;
+  const ev={
+    id:'ev_'+Date.now(),
+    title,
+    subtitle:document.getElementById('fe-sub').value,
+    emoji:document.getElementById('fe-emoji').value||'◈',
+    category:document.getElementById('fe-cat').value,
+    status:document.getElementById('fe-status').value||'draft',
+    description:document.getElementById('fe-desc').value,
+    date:document.getElementById('fe-date').value,
+    time:document.getElementById('fe-time').value,
+    pkgName:document.getElementById('fe-pkgname').value||'Standard',
+    price:priceRaw===''?-1:parseFloat(priceRaw),
+    items:document.getElementById('fe-items').value,
+    color:colors[events.length%colors.length],
+    createdAt:new Date().toISOString(),
+  };
+  setTimeout(()=>{
+    events.push(ev);
+    showToast(t('saved'));
+    showDash('events');
+  },400);
+}
+
+// ── PARTICIPANTS ──
+function renderParticipants(){
+  if(!registrations.length){
+    return `<div class="dash-head"><div><div class="dash-title">${t('sbParticipants')}</div></div></div>
+    <div class="empty"><div class="empty-icon">◉</div><div class="empty-title">${t('noParticipants')}</div><div class="empty-desc">${t('noParticipantsDesc')}</div></div>`;
+  }
+  const rows=registrations.map(r=>{
+    const ev=events.find(e=>e.id===r.eventId)||{};
+    return `<tr>
+      <td style="padding:10px 12px;font-size:13px;font-weight:500;color:var(--text)">${r.name}</td>
+      <td style="padding:10px 12px;font-size:12px;color:var(--text2)">${r.phone}</td>
+      <td style="padding:10px 12px;font-size:12px;color:var(--text2)">${ev.title||'—'}</td>
+      <td style="padding:10px 12px;font-size:12px;color:var(--text2)">${r.pkg}</td>
+      <td style="padding:10px 12px;font-size:12px;color:var(--text2)">${r.date||'—'}</td>
+      <td style="padding:10px 12px;font-size:12px;color:var(--text2)">${r.time||'—'}</td>
+    </tr>`;
+  }).reverse().join('');
+  return `<div class="dash-head"><div><div class="dash-title">${t('sbParticipants')}</div><div class="dash-sub">${registrations.length} ${lang==='ar'?'مشارك':'registrations'}</div></div>
+  <button class="abtn ghost sm" onclick="exportCSV()">⬇ CSV</button></div>
+  <div class="form-card" style="padding:0;overflow:hidden">
+  <table style="width:100%;border-collapse:collapse">
+    <thead><tr style="border-bottom:1px solid var(--border)">${['partName','partPhone','partEvent','partPkg','partDate','partTime'].map(k=>`<th style="padding:10px 12px;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;text-align:left">${t(k)}</th>`).join('')}</tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+function exportCSV(){
+  const rows=[['Name','Phone','Event','Package','Date','Time'],...registrations.map(r=>{const ev=events.find(e=>e.id===r.eventId)||{};return[r.name,r.phone,ev.title||'',r.pkg,r.date||'',r.time||''];})];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const b=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='participants.csv';a.click();
+}
+
+// ── PUBLIC LANDING ──
+function goPub(){showPage('p-public');renderPublic();}
+
+function renderPublic(){
+  const pubEvents=events.filter(e=>e.status==='published');
+  const el=document.getElementById('pub-area');
+  if(!pubEvents.length){
+    el.innerHTML=`<div style="min-height:calc(100vh - 56px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px">
+      <div style="font-size:48px;margin-bottom:20px;opacity:.3">◈</div>
+      <div style="font-size:20px;font-weight:600;color:var(--text2);margin-bottom:8px">${lang==='ar'?'لا توجد فعاليات متاحة حالياً':'No events available right now'}</div>
+      <div style="font-size:14px;color:var(--text3)">${lang==='ar'?'تابع قريباً لفعاليات رائعة':'Check back soon for amazing events'}</div>
+    </div>`;
+    return;
+  }
+  const cards=pubEvents.map(e=>`
+    <div onclick="viewPublicEvent('${e.id}')" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rlg);overflow:hidden;cursor:pointer;transition:.2s" onmouseover="this.style.borderColor='var(--border2)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+      <div style="height:160px;background:${e.color||'rgba(124,111,247,.15)'};display:flex;align-items:center;justify-content:center;font-size:56px">${e.emoji||'◈'}</div>
+      <div style="padding:16px">
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px">${e.title}</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:12px">${e.subtitle||e.category||''}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:14px;font-weight:600;color:var(--accent)">${e.price>0?'$'+e.price:e.price===0?t('evPriceFree'):''}</span>
+          <span style="font-size:12px;color:var(--text3)">${e.date?'📅 '+e.date:''}</span>
+        </div>
+      </div>
+    </div>`).join('');
+  el.innerHTML=`
+    <div style="padding:60px 20px 80px;text-align:center;border-bottom:1px solid var(--border)">
+      <div style="font-size:clamp(32px,5vw,56px);font-family:'Playfair Display',serif;font-weight:700;color:var(--text);margin-bottom:12px">${lang==='ar'?'رحلتك القادمة<br>تنتظرك هنا':'Your Next<br>Adventure Awaits'}</div>
+      <div style="font-size:15px;color:var(--text3)">${lang==='ar'?'فعاليات مختارة بعناية لتجارب لا تُنسى':'Curated experiences for unforgettable moments'}</div>
+    </div>
+    <div style="max-width:1000px;margin:0 auto;padding:40px 20px">
+      <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:20px">${pubEvents.length} ${lang==='ar'?'فعالية متاحة':'events available'}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px">${cards}</div>
+    </div>
+    <div style="padding:24px;text-align:center;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">
+      ${lang==='ar'?'مدير المشروع:':'Project Manager:'} <span style="color:var(--accent)">Mohanad Kadadou</span>
+    </div>`;
+}
+
+// ── PUBLIC EVENT PAGE ──
+function viewPublicEvent(id){
+  currentEvent=events.find(e=>e.id===id);
+  if(!currentEvent)return;
+  showPage('p-event');
+  renderEventPage();
+}
+
+function renderEventPage(){
+  const e=currentEvent;
+  const el=document.getElementById('event-area');
+  const isPublished=e.status==='published';
+  let times=[];
+  if(e.time) times=[e.time,'10:00','12:00'];
+  const pkgPrice=e.price>0?'$'+e.price:e.price===0?t('evPriceFree'):'';
+  el.innerHTML=`
+    <div class="pub-hero" style="background:${e.color||'rgba(124,111,247,.15)'}">
+      <div class="pub-hero-bg">${e.emoji||'◈'}</div>
+      <div class="pub-hero-overlay"></div>
+      <div class="pub-hero-content">
+        <button onclick="goPub()" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:7px 14px;border-radius:7px;font-size:12px;margin-bottom:14px;cursor:pointer">${t('pubBack')}</button>
+        <div class="pub-ht">${e.title}</div>
+        <div class="pub-meta">${e.subtitle||''} ${e.date?'· '+e.date:''}</div>
+      </div>
+    </div>
+    <div class="pub-body">
+      <div>
+        ${e.description?`<div class="pub-section"><div class="pub-section-title">${lang==='ar'?'تفاصيل الفعالية':'About this event'}</div><div style="font-size:14px;color:var(--text2);line-height:1.8">${e.description}</div></div>`:''}
+        ${e.date||times.length?`<div class="pub-section"><div class="pub-section-title">${t('pubDate')} & ${t('pubTime')}</div>
+          ${e.date?`<div style="margin-bottom:10px"><div style="font-size:12px;color:var(--text3);margin-bottom:8px">${t('pubDate')}</div><span class="date-chip sel">📅 ${e.date}</span></div>`:''}
+          ${times.length?`<div><div style="font-size:12px;color:var(--text3);margin-bottom:8px">${t('pubTime')}</div>${times.map(tm=>`<span class="time-chip">${tm}</span>`).join('')}</div>`:''}
+        </div>`:''}
+        ${e.items?`<div class="pub-section"><div class="pub-section-title">${t('pubIncluded')}</div>${e.items.split(',').map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border)"><span style="color:var(--green);font-size:12px">✓</span>${i.trim()}</div>`).join('')}</div>`:''}
+      </div>
+      <div>
+        <div class="booking-card">
+          ${pkgPrice?`<div style="font-size:26px;font-weight:700;color:var(--text);margin-bottom:4px;font-family:'Playfair Display',serif">${pkgPrice}</div><div style="font-size:12px;color:var(--text3);margin-bottom:16px">${lang==='ar'?'لكل شخص':'per person'}</div>`:''}
+          ${e.pkgName?`<div class="pkg-option selected"><div class="pkg-name">${e.pkgName}</div>${e.items?`<div class="pkg-items">${e.items}</div>`:''}${pkgPrice?`<div class="pkg-price">${pkgPrice}</div>`:''}</div>`:''}
+          ${isPublished?`<button class="yes-btn" onclick="startRegister('${e.id}')">${t('pubBookNow')}</button>
+          <div class="no-wrap"><button class="no-btn-inner" id="no-btn" onmouseover="jiggleNo()">${t('pubNoBtn')}</button></div>`
+          :`<div style="padding:14px;background:rgba(240,180,41,.08);border:1px solid rgba(240,180,41,.2);border-radius:8px;font-size:13px;color:var(--gold);text-align:center;margin-top:8px">${lang==='ar'?'هذه الفعالية غير منشورة بعد':'This event is not published yet'}</div>`}
+        </div>
+      </div>
+    </div>`;
+}
+function jiggleNo(){
+  const b=document.getElementById('no-btn');if(!b)return;
+  const dx=(Math.random()-0.5)*80;const dy=(Math.random()-0.5)*20;
+  b.style.transform=`translate(${dx}px,${dy}px)`;
+  setTimeout(()=>{b.style.transform='translate(0,0)';},800);
+}
+
+// ── REGISTRATION FLOW ──
+function startRegister(id){
+  currentEvent=events.find(e=>e.id===id);
+  if(!currentEvent)return;
+  regStep=0;regData={eventId:id,pkg:currentEvent.pkgName,date:currentEvent.date,time:currentEvent.time};
+  showPage('p-register');
+  renderReg();
+}
+
+const stepLabels=['regS1','regS2','regS3','regS4','regS5'];
+
+function renderReg(){
+  const el=document.getElementById('reg-area');
+  const stepsHTML=stepLabels.map((s,i)=>`
+    <div class="rst">
+      <div class="rst-num ${i<regStep?'rst-done':i===regStep?'rst-act':'rst-todo'}">${i<regStep?'✓':i+1}</div>
+      <div class="rst-label">${t(s)}</div>
+    </div>`).join('');
+  let body='';
+  if(regStep===0) body=renderRegPkg();
+  else if(regStep===1) body=renderRegDate();
+  else if(regStep===2) body=renderRegTime();
+  else if(regStep===3) body=renderRegDetails();
+  else body=renderRegDone();
+  el.innerHTML=`<div class="reg-wrap"><div class="reg-stepper">${stepsHTML}</div>${body}</div>`;
+}
+
+function renderRegPkg(){
+  const e=currentEvent;
+  const price=e.price>0?'$'+e.price:e.price===0?t('evPriceFree'):'';
+  return `<div class="reg-card">
+    <div class="reg-title">${t('regSelectPkg')}</div>
+    <div class="reg-sub">${e.title}</div>
+    <div class="pkg-option selected">
+      <div class="pkg-name">${e.pkgName||'Standard'}</div>
+      ${e.items?`<div class="pkg-items">${e.items}</div>`:''}
+      ${price?`<div class="pkg-price">${price}</div>`:''}
+    </div>
+    <div class="reg-nav"><span></span><button class="abtn" onclick="regStep=1;renderReg()">${t('regNext')}</button></div>
+  </div>`;
+}
+function renderRegDate(){
+  const e=currentEvent;
+  const d=e.date||'';
+  const dates=d?[d]:[new Date().toISOString().slice(0,10)];
+  return `<div class="reg-card">
+    <div class="reg-title">${t('regSelectDate')}</div>
+    <div class="reg-sub" style="margin-bottom:18px">${lang==='ar'?'التواريخ المتاحة':'Available dates'}</div>
+    <div id="date-chips">${dates.map((d,i)=>`<span class="date-chip ${i===0?'sel':''}" onclick="selectDate(this,'${d}')">${d}</span>`).join('')}</div>
+    <div class="reg-nav"><button class="abtn ghost" onclick="regStep=0;renderReg()">${t('regBack')}</button><button class="abtn" onclick="regStep=2;renderReg()">${t('regNext')}</button></div>
+  </div>`;
+}
+function selectDate(el,d){document.querySelectorAll('.date-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');regData.date=d;}
+function renderRegTime(){
+  const e=currentEvent;
+  const bt=e.time||'08:00';
+  const times=[bt,'10:00','12:00'];
+  return `<div class="reg-card">
+    <div class="reg-title">${t('regSelectTime')}</div>
+    <div class="reg-sub" style="margin-bottom:18px">${lang==='ar'?'وقت الانطلاق':'Departure time'}</div>
+    <div id="time-chips">${times.map((tm,i)=>`<span class="time-chip ${i===0?'sel':''}" onclick="selectTime(this,'${tm}')">${tm}</span>`).join('')}</div>
+    <div class="reg-nav"><button class="abtn ghost" onclick="regStep=1;renderReg()">${t('regBack')}</button><button class="abtn" onclick="regStep=3;renderReg()">${t('regNext')}</button></div>
+  </div>`;
+}
+function selectTime(el,tm){document.querySelectorAll('.time-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');regData.time=tm;}
+function renderRegDetails(){
+  return `<div class="reg-card">
+    <div class="reg-title">${t('regDetails')}</div>
+    <div class="reg-sub" style="margin-bottom:18px">${lang==='ar'?'أدخل بياناتك لإكمال التسجيل':'Enter your details to complete registration'}</div>
+    <div class="frow" style="margin-bottom:12px"><label class="flabel">${t('regName')} *</label><input class="finput" id="rg-name" placeholder="${t('regNamePh')}"></div>
+    <div class="frow" style="margin-bottom:12px"><label class="flabel">${t('regPhone')} *</label><input class="finput" id="rg-phone" placeholder="${t('regPhonePh')}" type="tel"></div>
+    <div class="frow"><label class="flabel">${t('regNotes')}</label><textarea class="ftextarea" id="rg-notes" placeholder="${t('regNotesPh')}"></textarea></div>
+    <div class="reg-nav"><button class="abtn ghost" onclick="regStep=2;renderReg()">${t('regBack')}</button><button class="abtn" onclick="submitReg()">${t('regBook')}</button></div>
+  </div>`;
+}
+function submitReg(){
+  const name=document.getElementById('rg-name').value.trim();
+  const phone=document.getElementById('rg-phone').value.trim();
+  if(!name||!phone){showToast(lang==='ar'?'الاسم والهاتف مطلوبان':'Name and phone are required');return;}
+  regData.name=name;regData.phone=phone;regData.notes=document.getElementById('rg-notes').value;
+  regData.id='REG'+Date.now();
+  regData.pkg=currentEvent.pkgName||'Standard';
+  regData.ref=t('refPrefix')+'-'+Math.floor(10000+Math.random()*90000);
+  registrations.push({...regData});
+  regStep=4;renderReg();
+}
+function renderRegDone(){
+  const e=currentEvent;
+  const themeColor=e.color?e.color.replace('rgba','').replace(',.15)','').replace(',.2)','')||'rgba(124,111,247,.15)':'rgba(124,111,247,.15)';
+  return `<div class="reg-card" style="text-align:center">
+    <div style="font-size:52px;margin-bottom:16px">🎉</div>
+    <div class="reg-title">${t('regConfirm')}</div>
+    <div class="reg-sub" style="margin:6px auto 24px;max-width:340px">${lang==='ar'?'حجزك مؤكد. بطاقة دعوتك جاهزة:':'Your booking is confirmed. Your invitation card:'}</div>
+    <div class="inv-card" style="background:${e.color||'rgba(124,111,247,.15)'};filter:brightness(1.5);background:linear-gradient(160deg,#1a1a2e,#16213e)">
+      <div class="inv-head" style="background:rgba(255,255,255,.05)">
+        <div style="font-size:36px;margin-bottom:10px">${e.emoji||'◈'}</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px">${e.title}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.55)">${e.subtitle||e.category||''}</div>
+      </div>
+      <div class="inv-body">
+        ${[
+          [t('partName'),regData.name],
+          [t('partDate'),regData.date||'—'],
+          [t('partTime'),regData.time||'—'],
+          [t('partPkg'),regData.pkg],
+        ].map(([k,v])=>`<div class="inv-row"><span class="inv-k" style="color:rgba(255,255,255,.5)">${k}</span><span class="inv-v" style="color:#fff">${v}</span></div>`).join('')}
+      </div>
+      <div class="inv-foot">
+        <div class="qr-box" style="color:rgba(255,255,255,.4)">${lang==='ar'?'رمز QR':'QR Code'}</div>
+        <div class="inv-ref" style="color:rgba(255,255,255,.4)">${regData.ref}</div>
+      </div>
+    </div>
+    <div class="share-row">
+      <button class="share-btn" onclick="showToast('${lang==='ar'?'تم التنزيل كـ PNG':'Downloaded as PNG'}')" >⬇ PNG</button>
+      <button class="share-btn" onclick="showToast('${lang==='ar'?'تم التنزيل كـ PDF':'Downloaded as PDF'}')" >📄 PDF</button>
+      <button class="share-btn" onclick="showToast('${lang==='ar'?'تمت المشاركة':'Shared!'}')" >💬 ${lang==='ar'?'واتساب':'WhatsApp'}</button>
+    </div>
+    <button class="abtn ghost" style="margin-top:16px;width:100%" onclick="goPub()">${lang==='ar'?'← العودة للرئيسية':'← Back to events'}</button>
+  </div>`;
+}
+
+// ── INIT ──
+renderNavAuth();
+renderLoginTexts();
+showPage('p-public');
+renderPublic();
+</script>
